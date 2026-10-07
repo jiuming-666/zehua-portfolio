@@ -16,15 +16,11 @@ export default function ProjectsPage() {
         eyebrow="Projects · Artifact Archive"
         icon={FolderKanban}
         title="实物项目档案"
-        description="整机级工程项目与研发全记录，覆盖「MCU+FPGA/CPLD 异构架构」「射频硬件」「光电精密测量」。每个项目均预留实物、原理图、波形、上位机四维工程证据。"
+        description="项目按「软硬件结合 / 硬件设计 / 软件与智能体」三大板块组织。公司在职项目受保密要求展示架构与成果，细节欢迎面试现场交流。"
       />
-      <ProjectsSection
-        eyebrow="Full Archive"
-        title="全部项目"
-        description="点击分类标签即时筛选；点击「Deep Dive」滑动浏览工程实拍组图。"
-        items={projects.map(attachEvidence)}
-        filterable
-      />
+      <div className="pt-10">
+        <ProjectsSection items={projects.map(attachEvidence)} />
+      </div>
     </>
   );
 }

@@ -23,11 +23,34 @@ export type ArtifactSlot = {
   caption: string;
 };
 
+/** 项目所属维度：软硬件结合 / 硬件 / 软件 */
+export type Domain = "hw-sw" | "hw" | "sw";
+
+export const domainLabels: Record<Domain, { title: string; en: string; desc: string }> = {
+  "hw-sw": {
+    title: "软硬件结合",
+    en: "HW + SW Integrated",
+    desc: "从原理图、底层驱动、FPGA 逻辑到人机界面的全链路交付",
+  },
+  hw: {
+    title: "硬件设计",
+    en: "Hardware Design",
+    desc: "原理图、PCB、射频与时序的独立设计能力",
+  },
+  sw: {
+    title: "软件与智能体",
+    en: "Software & Agents",
+    desc: "自研多智能体工作台与效率工具",
+  },
+};
+
 export type Project = {
   id: string;
   title: string;
   subtitle: string;
   category: string;
+  /** 所属维度（/projects 页据此分三大板块） */
+  domain: Domain;
   /** 卡片封面（若 photo-1.jpg 存在则自动被实拍图替代） */
   cover: string;
   status: string[];
@@ -57,6 +80,7 @@ export const projects: Project[] = [
     title: "无线光谱照度计",
     subtitle: "Wireless Spectral Illuminance Meter",
     category: "IoT / 异构芯片",
+    domain: "hw-sw",
     cover:
       "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
     status: ["独立全链路交付", "无线 OTA 已验证"],
@@ -81,6 +105,7 @@ export const projects: Project[] = [
     title: "光谱彩色亮度计",
     subtitle: "Spectral Color Luminance Meter",
     category: "仪器 / FPGA+MCU",
+    domain: "hw-sw",
     cover:
       "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
     status: ["FPGA+MCU+Qt 三维架构", "已落地产线"],
@@ -105,6 +130,7 @@ export const projects: Project[] = [
     title: "十合一多功能光源频闪测试仪",
     subtitle: "10-in-1 Optical Flicker Analyzer",
     category: "检测仪器 / FPGA+DSP",
+    domain: "hw-sw",
     cover:
       "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
     status: ["主导架构设计", "十项指标全通过"],
@@ -129,6 +155,7 @@ export const projects: Project[] = [
     title: "HPCS-550 高精度光谱分析仪智能探头",
     subtitle: "HPCS-550 Smart Spectrometer Probe",
     category: "工业探头 / CPLD 时序",
+    domain: "hw-sw",
     cover:
       "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
     status: ["主导首板调测", "工业级稳定输出"],
@@ -153,6 +180,7 @@ export const projects: Project[] = [
     title: "工业级 Cat.1 蜂窝物联网双卡冗余通信模组",
     subtitle: "Industrial LTE Cat.1 Dual-SIM Telemetry Core",
     category: "IoT / 射频硬件",
+    domain: "hw",
     cover:
       "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
     status: ["独立硬件设计", "射频指标达标"],

@@ -1,117 +1,149 @@
-﻿"use client";
+"use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, ArrowUpRight, BadgeCheck } from "lucide-react";
+import {
+  ArrowUpRight,
+  BadgeCheck,
+  Bot,
+  CircuitBoard,
+  Cpu,
+  type LucideIcon,
+} from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import DeepDiveModal from "@/components/projects/DeepDiveModal";
-import { projects, type Project } from "@/lib/projects";
+import type { Domain } from "@/lib/projects";
+import { domainLabels } from "@/lib/projects";
 import type { ProjectWithEvidence } from "@/lib/artifacts";
 
+const domainIcons: Record<Domain, LucideIcon> = {
+  "hw-sw": CircuitBoard,
+  hw: Cpu,
+  sw: Bot,
+};
+
+/** 三大板块的展示顺序 */
+const domainOrder: Domain[] = ["hw-sw", "hw", "sw"];
+
 type ProjectsSectionProps = {
-  eyebrow?: string;
-  title?: string;
-  description?: string;
   /** 展示的项目列表（须先经服务端 attachEvidence 处理） */
   items: ProjectWithEvidence[];
-  viewAll?: boolean;
-  /** 是否显示分类筛选器（/projects 页启用） */
-  filterable?: boolean;
 };
 
 /**
- * 项目展示区块（Bento Grid + Deep Dive 弹窗）
- * 首页传精选子集 + viewAll；/projects 页传全量。
+ * /projects 页主体：按「软硬件结合 / 硬件设计 / 软件与智能体」三大板块分组展示。
+ * 纯数据驱动——新项目在 lib/projects.ts 里标 domain 字段即自动归组。
  */
 export default function ProjectsSection({
-  eyebrow = "Selected Artifacts",
-  title = "实物项目展示",
-  description = "不承诺、不包装——每一个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度工程实拍与研发过程。",
   items,
-  viewAll = false,
-  filterable = false,
 }: ProjectsSectionProps) {
   const [active, setActive] = useState<ProjectWithEvidence | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>("全部");
-
-  // 从数据自动归纳分类（加新项目无需维护此列表）
-  const categories = [
-    "全部",
-    ...Array.from(new Set(items.map((p) => p.category))),
-  ];
-  const visible =
-    activeCategory === "全部"
-      ? items
-      : items.filter((p) => p.category === activeCategory);
 
   return (
-    <section
-      id="projects"
-      className="relative mx-auto max-w-6xl scroll-mt-24 px-5 py-24 sm:px-8 sm:py-32"
-    >
-      <Reveal>
-        <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
-          {eyebrow}
-        </p>
-        <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-50 sm:text-5xl">
-          {title}
-        </h2>
-        <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          {description}
-        </p>
-      </Reveal>
+    <section className="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
+      {domainOrder.map((domain, i) => {
+        const group = items.filter((p) => p.domain === domain);
+        const label = domainLabels[domain];
+        const Icon = domainIcons[domain];
+        return (
+          <div key={domain} className={i > 0 ? "mt-20" : ""}>
+            {/* 板块标题 */}
+            <Reveal>
+              <div className="flex items-end justify-between gap-4 border-b border-zinc-800 pb-5">
+                <div className="flex items-center gap-4">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-xl border border-accent/25 bg-accent/10">
+                    <Icon className="h-6 w-6 text-accent" />
+                  </span>
+                  <div>
+                    <h2 className="text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
+                      {label.title}
+                      <span className="ml-2 text-xs font-normal uppercase tracking-widest text-zinc-600">
+                        {label.en}
+                      </span>
+                    </h2>
+                    <p className="mt-1 text-sm text-zinc-500">{label.desc}</p>
+                  </div>
+                </div>
+                <span className="hidden shrink-0 text-xs text-zinc-600 sm:block">
+                  {group.length} 个项目
+                </span>
+              </div>
+            </Reveal>
 
-      {/* 分类筛选器 */}
-      {filterable && (
-        <Reveal delay={250}>
-          <div className="mt-8 flex flex-wrap gap-2">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setActiveCategory(cat)}
-                className={`rounded-full px-4 py-1.5 text-sm transition-all duration-200 ${
-                  activeCategory === cat
-                    ? "bg-accent font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.3)]"
-                    : "border border-zinc-800 bg-zinc-900/50 text-zinc-400 backdrop-blur hover:border-zinc-700 hover:text-zinc-100"
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+            {/* 板块内容 */}
+            {domain === "sw" ? (
+              <AgentsTeaser />
+            ) : (
+              <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                {group.map((project, j) => (
+                  <Reveal
+                    key={project.id}
+                    delay={(j % 3) * 100}
+                    className={
+                      project.span === "wide" && group.length > 1
+                        ? "lg:col-span-2"
+                        : ""
+                    }
+                  >
+                    <ProjectCard
+                      project={project}
+                      onOpen={() => setActive(project)}
+                    />
+                  </Reveal>
+                ))}
+              </div>
+            )}
           </div>
-        </Reveal>
-      )}
-
-      {/* Bento Grid */}
-      <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {visible.map((project, i) => (
-          <Reveal
-            key={project.id}
-            delay={(i % 3) * 100}
-            className={project.span === "wide" ? "lg:col-span-2" : ""}
-          >
-            <ProjectCard project={project} onOpen={() => setActive(project)} />
-          </Reveal>
-        ))}
-      </div>
-
-      {viewAll && (
-        <Reveal delay={150}>
-          <div className="mt-10 flex justify-center">
-            <Link
-              href="/projects"
-              className="group inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-6 py-3 text-sm font-medium text-zinc-300 backdrop-blur transition-all duration-200 hover:border-zinc-700 hover:text-zinc-100"
-            >
-              查看全部项目与研发细节
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
-            </Link>
-          </div>
-        </Reveal>
-      )}
+        );
+      })}
 
       <DeepDiveModal project={active} onClose={() => setActive(null)} />
     </section>
+  );
+}
+
+/* ── 软件板块：智能体入口卡（详情见 /agents 选项卡） ── */
+function AgentsTeaser() {
+  return (
+    <Reveal delay={100}>
+      <Link
+        href="/agents"
+        className="group mt-8 flex flex-col gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-zinc-900/80 sm:flex-row sm:items-center sm:p-7"
+      >
+        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10">
+          <Bot className="h-7 w-7 text-accent" />
+        </span>
+        <div className="min-w-0 flex-1">
+          <h3 className="text-lg font-semibold tracking-tight text-zinc-50">
+            智能体乐园 · 多智能体工作台
+            <span className="ml-2 rounded-full border border-neon/30 bg-zinc-950/60 px-2 py-0.5 text-[10px] font-medium text-neon">
+              已交付 · 持续迭代
+            </span>
+          </h3>
+          <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">
+            ReAct 循环框架 + 真实浏览器抓取 + 本地 RAG 知识库。
+            内建立创选型助手与手册答疑精灵，选型报告、页码溯源、绝不编造。
+          </p>
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {["Python", "FastAPI", "SSE", "Playwright", "RAG / BM25", "ReAct"].map(
+              (s) => (
+                <span
+                  key={s}
+                  className="rounded-md border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[11px] text-zinc-400"
+                >
+                  {s}
+                </span>
+              ),
+            )}
+          </div>
+        </div>
+        <span className="flex shrink-0 items-center gap-1.5 self-center rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 group-hover:bg-accent-soft">
+          进入智能体页
+          <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+        </span>
+      </Link>
+    </Reveal>
   );
 }
 
@@ -186,7 +218,9 @@ function ProjectCard({
             onClick={onOpen}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors duration-200 hover:text-accent-soft"
           >
-            查看工程实拍与研发过程 (Deep Dive)
+            {project.confidential
+              ? "查看项目详情 (Deep Dive)"
+              : "查看工程实拍与研发过程 (Deep Dive)"}
             <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </button>
         </div>
@@ -194,5 +228,3 @@ function ProjectCard({
     </article>
   );
 }
-
-export type { Project };
