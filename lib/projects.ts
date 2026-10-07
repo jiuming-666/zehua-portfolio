@@ -38,9 +38,9 @@ export const domainLabels: Record<Domain, { title: string; en: string; desc: str
     desc: "原理图、PCB、射频与时序的独立设计能力",
   },
   sw: {
-    title: "软件与智能体",
-    en: "Software & Agents",
-    desc: "自研多智能体工作台与效率工具",
+    title: "软件",
+    en: "Software",
+    desc: "自研智能体与上位机软件开发",
   },
 };
 
@@ -155,7 +155,7 @@ export const projects: Project[] = [
     title: "HPCS-550 高精度光谱分析仪智能探头",
     subtitle: "HPCS-550 Smart Spectrometer Probe",
     category: "工业探头 / CPLD 时序",
-    domain: "hw-sw",
+    domain: "sw",
     cover:
       "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
     status: ["主导首板调测", "工业级稳定输出"],
@@ -201,6 +201,41 @@ export const projects: Project[] = [
       { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "模块化标注原理图 · 大电流供电 / 双卡电路 / 射频匹配 / 电平转换" },
       { slot: 2, category: "PCB Layout", categoryZh: "PCB走线", caption: "顶层/底层双层走线与 50Ω 阻抗铜箔实拍" },
       { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "PCB 实物 · 焊接打样" },
+    ],
+  },
+  {
+    id: "edge-iot-master-controller",
+    title: "工业级多路隔离式边缘物联网综合测控主板",
+    subtitle: "Industrial Multi-Channel Isolated Edge-IoT Master Controller",
+    category: "IoT / 工业主板",
+    domain: "hw",
+    cover:
+      "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1600&auto=format&fit=crop",
+    status: ["独立硬件设计", "工业级 EMI 防护"],
+    tags: [
+      "STM32F407VET6",
+      "4G-LTE",
+      "12路光耦隔离 DI",
+      "9路继电器驱动 DO",
+      "JQ8400+8002A 语音",
+      "双路 RS232",
+    ],
+    highlight:
+      "面向户外复杂工业环境与无人值守终端：12 路全光耦隔离输入 + 9 路 ULN2003 继电器强电驱动阵列，ACM9070 共模电感 + TVS + 防反接的阶梯降压供电架构，极致抗电磁干扰",
+    deepDive:
+      "面向户外复杂工业环境与无人值守终端自研的高性能综合测控主板。供电级集成 ACM9070 共模电感、TVS 及防反接保护，经 DC-DC (XL1509) 与 LDO 阶梯降压，保证恶劣电源环境下的稳定输出；设计 12 路全光耦隔离输入与 9 路 ULN2003 继电器强电驱动阵列，具备极致的抗电磁干扰性能；板载双路 RS232 分别对接工业 HMI 触摸屏与 RFID 读卡模块，集成 Type-C 可更换的 JQ8400+8002A 语音播报系统，并经 4G-LTE 实现远程遥测链路。",
+    specs: [
+      { label: "隔离输入", value: "12 路 DI" },
+      { label: "继电器", value: "9 路 DO" },
+      { label: "总线", value: "双路 RS232" },
+      { label: "供电防护", value: "TVS+防反接" },
+    ],
+    span: "wide",
+    featured: true,
+    artifacts: [
+      { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "整板模块化原理图 · 供电 / 隔离输入 / 继电器阵列 / 通信与语音" },
+      { slot: 2, category: "PCB Layout", categoryZh: "PCB设计", caption: "双层 PCB Layout · 工业 EMI 滤波与隔离布局" },
+      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "打样焊接实物 PCB" },
     ],
   },
 ];
