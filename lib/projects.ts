@@ -200,7 +200,7 @@ export const projects: Project[] = [
     artifacts: [
       { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "模块化标注原理图 · 大电流供电 / 双卡电路 / 射频匹配 / 电平转换" },
       { slot: 2, category: "PCB Layout", categoryZh: "PCB走线", caption: "顶层/底层双层走线与 50Ω 阻抗铜箔实拍" },
-      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "PCB 实物 · 焊接打样" },
+      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "打样实物 PCB" },
     ],
   },
   {
@@ -235,7 +235,7 @@ export const projects: Project[] = [
     artifacts: [
       { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "整板模块化原理图 · 供电 / 隔离输入 / 继电器阵列 / 通信与语音" },
       { slot: 2, category: "PCB Layout", categoryZh: "PCB设计", caption: "双层 PCB Layout · 工业 EMI 滤波与隔离布局" },
-      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "打样焊接实物 PCB" },
+      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "打样实物 PCB" },
     ],
   },
 ];
