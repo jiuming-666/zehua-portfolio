@@ -24,6 +24,12 @@ yarn-error.log*
 Thumbs.db
 .idea/
 
+# ── 仅本地文件（对外不可见）────────────────────
+# 详细维护指南、AI 协作规则、更新日志——只留在本地
+GUIDE.local.md
+AGENTS.md
+CHANGELOG.md
+
 # ── 说明 ───────────────────────────────────────
 # 上传：app/ components/ lib/ public/（含项目照片与 resume.pdf，网站运行必需）
 # 不上传：以上所有目录。git status 里不应出现 node_modules / .next
