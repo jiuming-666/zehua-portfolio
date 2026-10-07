@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { FolderKanban, FileText, User, Bot } from "lucide-react";
+import { FolderKanban, FileText, User, Bot, Wrench } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { agentsEntry } from "@/lib/agents";
 
@@ -17,6 +17,13 @@ const tiles = [
     title: agentsEntry.title,
     en: agentsEntry.en,
     desc: agentsEntry.desc,
+  },
+  {
+    href: "/tools",
+    icon: Wrench,
+    title: "工具箱",
+    en: "Tools",
+    desc: "分压电阻、波特率等常用嵌入式在线计算器",
   },
   {
     href: "/resume",
@@ -46,7 +53,7 @@ export default function QuickNav() {
           站内导航
         </h2>
       </Reveal>
-      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
         {tiles.map((tile, i) => {
           const isExternal = tile.href.startsWith("#");
           const Wrapper = isExternal ? "a" : Link;
