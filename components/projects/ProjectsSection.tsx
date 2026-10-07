@@ -1,8 +1,7 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
 import {
   ArrowUpRight,
   BadgeCheck,
@@ -72,78 +71,30 @@ export default function ProjectsSection({
             </Reveal>
 
             {/* 板块内容 */}
-            {domain === "sw" ? (
-              <AgentsTeaser />
-            ) : (
-              <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-                {group.map((project, j) => (
-                  <Reveal
-                    key={project.id}
-                    delay={(j % 3) * 100}
-                    className={
-                      project.span === "wide" && group.length > 1
-                        ? "lg:col-span-2"
-                        : ""
-                    }
-                  >
-                    <ProjectCard
-                      project={project}
-                      onOpen={() => setActive(project)}
-                    />
-                  </Reveal>
-                ))}
-              </div>
-            )}
+            <div className="mt-8 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+              {group.map((project, j) => (
+                <Reveal
+                  key={project.id}
+                  delay={(j % 3) * 100}
+                  className={
+                    project.span === "wide" && group.length > 1
+                      ? "lg:col-span-2"
+                      : ""
+                  }
+                >
+                  <ProjectCard
+                    project={project}
+                    onOpen={() => setActive(project)}
+                  />
+                </Reveal>
+              ))}
+            </div>
           </div>
         );
       })}
 
       <DeepDiveModal project={active} onClose={() => setActive(null)} />
     </section>
-  );
-}
-
-/* ── 软件板块：智能体入口卡（详情见 /agents 选项卡） ── */
-function AgentsTeaser() {
-  return (
-    <Reveal delay={100}>
-      <Link
-        href="/agents"
-        className="group mt-8 flex flex-col gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-zinc-900/80 sm:flex-row sm:items-center sm:p-7"
-      >
-        <span className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10">
-          <Bot className="h-7 w-7 text-accent" />
-        </span>
-        <div className="min-w-0 flex-1">
-          <h3 className="text-lg font-semibold tracking-tight text-zinc-50">
-            智能体乐园 · 多智能体工作台
-            <span className="ml-2 rounded-full border border-neon/30 bg-zinc-950/60 px-2 py-0.5 text-[10px] font-medium text-neon">
-              已交付 · 持续迭代
-            </span>
-          </h3>
-          <p className="mt-1.5 text-sm leading-relaxed text-zinc-400">
-            ReAct 循环框架 + 真实浏览器抓取 + 本地 RAG 知识库。
-            内建立创选型助手与手册答疑精灵，选型报告、页码溯源、绝不编造。
-          </p>
-          <div className="mt-3 flex flex-wrap gap-1.5">
-            {["Python", "FastAPI", "SSE", "Playwright", "RAG / BM25", "ReAct"].map(
-              (s) => (
-                <span
-                  key={s}
-                  className="rounded-md border border-zinc-800 bg-zinc-950/60 px-2 py-0.5 text-[11px] text-zinc-400"
-                >
-                  {s}
-                </span>
-              ),
-            )}
-          </div>
-        </div>
-        <span className="flex shrink-0 items-center gap-1.5 self-center rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 group-hover:bg-accent-soft">
-          进入智能体页
-          <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-        </span>
-      </Link>
-    </Reveal>
   );
 }
 
