@@ -1,6 +1,7 @@
 # 更新日志（最新在上）
 
 ## 2026-10-07
+- 增加 GitHub 远程仓库（jiuming-666/zehua-portfolio），main 分支首次推送成功，本地与远程已同步
 - 修复 项目源文件异常丢失，全部重建（app/ components/ lib/ 配置文件），重建后构建验证通过
 - 新建 public/ 目录与资源放置说明
 - 新建 AGENTS.md（AI 协作规则：强制写更新日志）
