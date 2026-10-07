@@ -41,7 +41,9 @@ export type Project = {
   span: "wide" | "normal";
   /** 是否在首页精选区展示 */
   featured?: boolean;
-  /** 工程实拍证据槽位（固定 4 个维度） */
+  /** 在职公司项目、涉密不放实拍图时置 true（弹窗显示保密说明卡） */
+  confidential?: boolean;
+  /** 工程实拍证据槽位（confidential 项目留空数组） */
   artifacts: ArtifactSlot[];
 };
 
@@ -71,12 +73,8 @@ export const projects: Project[] = [
     ],
     span: "wide",
     featured: true,
-    artifacts: [
-      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 便携式光谱采集探头成品实拍" },
-      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "Altium Designer 原理图与 PCB Layout · 探头主板" },
-      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "CPLD 传感器时序与 SPI-DMA 波形 · 逻辑分析仪抓包" },
-      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "上位机 / 串口调试 · FFT 频谱与四模通信协议验证" },
-    ],
+    confidential: true,
+    artifacts: [],
   },
   {
     id: "spectral-colorimeter",
@@ -99,12 +97,8 @@ export const projects: Project[] = [
     ],
     span: "normal",
     featured: true,
-    artifacts: [
-      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 光源亮度/色温/色度检测成品" },
-      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "FPGA + STM32F427 双板原理图 / PCB 3D 渲染" },
-      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "FMC 8080 并口时序 · 示波器实测" },
-      { slot: 4, category: "UI", categoryZh: "界面显示", caption: "LVGL 界面 · 光谱曲线双缓冲无撕裂显示" },
-    ],
+    confidential: true,
+    artifacts: [],
   },
   {
     id: "optical-flicker-analyzer",
@@ -127,12 +121,8 @@ export const projects: Project[] = [
     ],
     span: "wide",
     featured: true,
-    artifacts: [
-      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 十合一多功能光源频闪测试仪" },
-      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "高速 ADC 光电探测模拟前端原理图 / PCB Layout" },
-      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "FSMC 总线吞吐与 ADC 采样时序 · 示波器/逻辑分析仪实测" },
-      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "测试上位机 · SVM/PstLM/频闪百分比十项指标界面" },
-    ],
+    confidential: true,
+    artifacts: [],
   },
   {
     id: "hpcs-550-probe",
@@ -155,12 +145,8 @@ export const projects: Project[] = [
     ],
     span: "normal",
     featured: true,
-    artifacts: [
-      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "HPCS-550 智能探头 · 首板样机实拍" },
-      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "线阵 CCD 驱动原理图 / CPLD 时序电路设计" },
-      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "CCD 纳秒级转移脉冲与积分时序 · 示波器实测" },
-      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "上位机 · 自适应曝光与温漂多项式校正输出" },
-    ],
+    confidential: true,
+    artifacts: [],
   },
   {
     id: "cat1-dual-sim-telemetry",

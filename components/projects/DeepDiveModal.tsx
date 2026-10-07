@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
-import { ImageOff, X, ZoomIn } from "lucide-react";
+import { Bot, ImageOff, ShieldCheck, X, ZoomIn } from "lucide-react";
 import type { ProjectWithEvidence } from "@/lib/artifacts";
 import ArtifactsLightbox, {
   type LightboxArtifact,
@@ -58,8 +58,30 @@ export default function DeepDiveModal({
         </button>
 
         <div className="max-h-[85vh] overflow-y-auto sm:max-h-[88vh]">
+          {/* 涉密项目：保密说明卡 */}
+          {project.confidential && project.evidence.length === 0 && (
+            <div className="border-b border-zinc-800 bg-zinc-900/40 px-6 py-6 sm:px-8">
+              <div className="flex items-start gap-3 rounded-xl border border-zinc-800 bg-zinc-950/60 p-4 sm:p-5">
+                <ShieldCheck className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
+                <p className="text-sm leading-relaxed text-zinc-400">
+                  本项目为
+                  <span className="text-zinc-300">在职公司项目</span>
+                  ，受保密要求，工程实拍暂不公开展示。技术方案与调试细节，
+                  <span className="text-zinc-300">欢迎面试现场交流</span>
+                  。
+                </p>
+              </div>
+            </div>
+          )}
+
           {/* ── Proof of Artifacts：工程实拍组图，横向滑动 ── */}
-          <div className="border-b border-zinc-800 bg-zinc-900/40 py-4">
+          <div
+            className={`${
+              project.evidence.length > 0
+                ? "border-b border-zinc-800 bg-zinc-900/40 py-4"
+                : "hidden"
+            }`}
+          >
             <p className="mb-3 px-5 text-[11px] font-medium uppercase tracking-[0.2em] text-accent sm:px-6">
               Proof of Artifacts · 工程实拍组图（左右滑动）
             </p>
