@@ -38,16 +38,16 @@ function ZhihuIcon({ className }: { className?: string }) {
 }
 
 const socials = [
-  { label: "GitHub", href: "https://github.com/your-username", Icon: Github },
+  { label: "GitHub", href: "https://github.com/jiuming-666", Icon: Github },
   {
     label: "Bilibili",
-    href: "https://space.bilibili.com/your-id",
+    href: "#contact",
     Icon: BilibiliIcon,
   },
-  { label: "知乎", href: "https://www.zhihu.com/people/your-id", Icon: ZhihuIcon },
+  { label: "知乎", href: "#contact", Icon: ZhihuIcon },
   {
     label: "LinkedIn",
-    href: "https://www.linkedin.com/in/your-id",
+    href: "#contact",
     Icon: Linkedin,
   },
 ];
