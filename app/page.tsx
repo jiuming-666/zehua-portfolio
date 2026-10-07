@@ -1,27 +1,16 @@
 import Hero from "@/components/home/Hero";
 import QuickNav from "@/components/home/QuickNav";
-import ProjectsSection from "@/components/projects/ProjectsSection";
 import Philosophy from "@/components/about/Philosophy";
-import { projects } from "@/lib/projects";
-import { attachEvidence } from "@/lib/artifacts";
 
+/**
+ * 首页 = 纯 Landing：只做自我介绍与站内导航。
+ * 项目 → /projects · 智能体 → /agents · 简历 → /resume · 关于 → /about
+ */
 export default function Home() {
-  const items = projects
-    .filter((p) => p.featured)
-    .map(attachEvidence);
-
   return (
     <>
       <Hero />
       <QuickNav />
-      {/* 首页仅展示精选项目，完整列表见 /projects */}
-      <ProjectsSection
-        eyebrow="Selected Artifacts"
-        title="精选实物项目"
-        description="每个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度工程实拍与研发过程。"
-        items={items}
-        viewAll
-      />
       <Philosophy />
     </>
   );

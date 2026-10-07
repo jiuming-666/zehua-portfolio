@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Menu, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { navPages, site } from "@/lib/site";
 
 export default function Navbar() {
@@ -65,13 +65,6 @@ export default function Navbar() {
               </span>
             </Link>
           ))}
-          <Link
-            href="/resume"
-            className="ml-3 flex items-center gap-2 rounded-full bg-accent px-4 py-2 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.35)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_32px_rgba(255,92,26,0.5)]"
-          >
-            <FileText className="h-4 w-4" />
-            我的简历
-          </Link>
         </div>
 
         {/* 移动端菜单按钮 */}
@@ -104,13 +97,6 @@ export default function Navbar() {
                 </span>
               </Link>
             ))}
-            <Link
-              href="/resume"
-              className="mt-2 flex items-center justify-center gap-2 rounded-full bg-accent px-4 py-2.5 text-sm font-medium text-white"
-            >
-              <FileText className="h-4 w-4" />
-              查看/下载我的简历
-            </Link>
           </div>
         </div>
       )}

@@ -1,5 +1,5 @@
 ﻿import Link from "next/link";
-import { ArrowRight, ArrowDownRight } from "lucide-react";
+import { ArrowDownRight, Bot } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { site } from "@/lib/site";
 
@@ -48,11 +48,11 @@ export default function Hero() {
               <ArrowDownRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
             </Link>
             <Link
-              href="/resume"
+              href="/agents"
               className="group inline-flex items-center justify-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-6 py-3.5 text-sm font-medium text-zinc-300 backdrop-blur transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-100"
             >
-              查看我的简历
-              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+              我的智能体
+              <Bot className="h-4 w-4 transition-transform duration-200 group-hover:-rotate-12" />
             </Link>
           </div>
         </Reveal>
