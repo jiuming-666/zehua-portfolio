@@ -1,16 +1,35 @@
 /**
- * 项目数据集中配置文件：项目文案、图片、状态标签、规格数据均在此维护。
+ * ─────────────────────────────────────────────────────────────────────
+ *  项目数据集中配置（新增项目 = 复制一个对象，改 id 和文字即可）
+ *
+ *  工程实拍图（Proof of Artifacts）约定：
+ *  每个项目在 /public/projects/<id>/ 下预留 4 张图：
+ *    photo-1.jpg  实物整机/样机成品 (Hardware Prototype)
+ *    photo-2.jpg  原理图 / PCB Layout (Altium Designer)
+ *    photo-3.jpg  示波器 / 逻辑分析仪实测波形 (Waveform Debugging)
+ *    photo-4.jpg  上位机 / 屏显 UI (Qt / LVGL Interface)
+ *  把照片放进对应文件夹后重新部署即可自动展示，无需改代码。
+ * ─────────────────────────────────────────────────────────────────────
  */
+
+/** 工程实拍图槽位（纯数据；文件是否存在由 lib/artifacts.ts 构建时检测） */
+export type ArtifactSlot = {
+  slot: 1 | 2 | 3 | 4;
+  /** 英文类目（图上角标） */
+  category: string;
+  /** 中文类目 */
+  categoryZh: string;
+  /** 工程图注（全屏查看时显示） */
+  caption: string;
+};
 
 export type Project = {
   id: string;
   title: string;
   subtitle: string;
   category: string;
-  /** 卡片封面大图 */
+  /** 卡片封面（若 photo-1.jpg 存在则自动被实拍图替代） */
   cover: string;
-  /** Deep Dive 弹窗中的多角度实拍图 */
-  images: { src: string; caption: string }[];
   status: string[];
   tags: string[];
   /** 一句话硬核说明（用数据说话） */
@@ -22,76 +41,126 @@ export type Project = {
   span: "wide" | "normal";
   /** 是否在首页精选区展示 */
   featured?: boolean;
+  /** 工程实拍证据槽位（固定 4 个维度） */
+  artifacts: ArtifactSlot[];
 };
+
+/** 生成工程实拍图的标准路径 */
+export const artifactPath = (id: string, slot: number) =>
+  `/projects/${id}/photo-${slot}.jpg`;
 
 export const projects: Project[] = [
   {
+    id: "wireless-spectrometer",
+    title: "无线光谱照度计",
+    subtitle: "Wireless Spectral Illuminance Meter",
+    category: "IoT / 异构芯片",
+    cover:
+      "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
+    status: ["独立全链路交付", "无线 OTA 已验证"],
+    tags: ["AG32 (MCU+CPLD)", "FreeRTOS", "ARM-DSP (FFT)", "多模无线通信", "Bootloader"],
+    highlight:
+      "CPLD 硬件逻辑生成传感器精密时序，零 CPU 占用完成高频光谱采集；USB/串口/蓝牙/Wi-Fi 四模通信 + 断点续传协议，支持无线 OTA 升级",
+    deepDive:
+      "独立负责原理图/PCB 设计、CPLD 逻辑、FreeRTOS 固件架构与软硬件联调。利用 AG32 内置 CPLD 硬件逻辑生成传感器精密时序，零 CPU 占用完成高频光谱数据采集，配合 DMA 实现高效 Flash 存储；软件基于 FreeRTOS 架构，调用 ARM-DSP 库完成 FFT 实时频谱分析；构建 USB、串口及蓝牙/Wi-Fi（透传模式）四模通信架构，设计断点续传协议确保无线传输完整性，并支持 Bootloader 无线 OTA 升级。",
+    specs: [
+      { label: "芯片", value: "AG32 MCU+CPLD" },
+      { label: "通信", value: "4 模" },
+      { label: "算法", value: "FFT 实时频谱" },
+      { label: "升级", value: "无线 OTA" },
+    ],
+    span: "wide",
+    featured: true,
+    artifacts: [
+      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 便携式光谱采集探头成品实拍" },
+      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "Altium Designer 原理图与 PCB Layout · 探头主板" },
+      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "CPLD 传感器时序与 SPI-DMA 波形 · 逻辑分析仪抓包" },
+      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "上位机 / 串口调试 · FFT 频谱与四模通信协议验证" },
+    ],
+  },
+  {
     id: "spectral-colorimeter",
     title: "光谱彩色亮度计",
-    subtitle: "Spectral Colorimeter · 整机研发",
+    subtitle: "Spectral Color Luminance Meter",
     category: "仪器 / FPGA+MCU",
     cover:
       "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
-    images: [
-      {
-        src: "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
-        caption: "整机联调 · 光源色度检测",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
-        caption: "FPGA + STM32F427 双芯片架构",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
-        caption: "LVGL 界面 · 双缓冲防撕裂调试",
-      },
-    ],
-    status: ["100% 全链路参与", "已落地产线"],
-    tags: ["HC2000 FPGA", "STM32F427", "Verilog", "LVGL", "C++/Qt"],
+    status: ["FPGA+MCU+Qt 三维架构", "已落地产线"],
+    tags: ["HC2000 FPGA", "STM32F427", "LVGL 双缓冲", "FMC 并口", "C++/Qt 上位机"],
     highlight:
-      "「FPGA采集 + MCU控制 + Qt上位机」三维架构，LVGL 双缓冲彻底解决高刷新率画面撕裂，自研上位机实现自动化测试",
+      "FPGA 驱动 CCD 精密高速采集；FMC 总线 8080 并口 + LVGL 双缓冲彻底消除曲线重绘撕裂；自研 Qt 自动化校准上位机",
     deepDive:
-      "负责 FPGA 端基于 Verilog 状态机实现 CCD 传感器的精密驱动与高速采样；MCU 端利用 FMC 总线以 8080 并口驱动屏幕，通过 LVGL 结合双缓冲区机制解决高刷新率下光谱曲线绘制的画面撕裂；基于 C++/Qt 自研 PC 端测试上位机，实现光谱波形实时绘制、参数校准及自动化测试，大幅提升系统联调效率。",
+      "负责 FPGA 采样状态机编写、MCU 图形系统优化及 Qt 上位机全套开发。FPGA 端基于 Verilog 状态机实现 CCD 传感器精密驱动与高速采样；MCU 端利用 FMC 总线以 8080 并口驱动屏幕，通过 LVGL 结合双缓冲机制彻底解决高刷新率下光谱曲线重绘的画面撕裂；基于 C++/Qt 自研 PC 端自动化校准上位机，实现光谱波形实时绘制、参数校准及自动化测试，大幅提升系统联调效率。",
     specs: [
       { label: "架构", value: "FPGA+MCU+Qt" },
       { label: "传感器", value: "CCD" },
       { label: "显示", value: "LVGL 双缓冲" },
-      { label: "上位机", value: "C++/Qt 自研" },
-    ],
-    span: "wide",
-    featured: true,
-  },
-  {
-    id: "wireless-spectrometer",
-    title: "无线光谱照度计",
-    subtitle: "Wireless Spectrometer · 便携探头",
-    category: "IoT / 异构芯片",
-    cover:
-      "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
-    images: [
-      {
-        src: "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
-        caption: "便携式光谱采集探头",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
-        caption: "CPLD 时序 · 零 CPU 占用采集验证",
-      },
-    ],
-    status: ["100% 独立负责硬件+底层", "无线传输完整可靠"],
-    tags: ["AG32 CPLD+MCU", "FreeRTOS", "DSP/FFT", "BLE/Wi-Fi", "Bootloader"],
-    highlight:
-      "CPLD 硬件逻辑生成精密时序，零 CPU 占用完成高频光谱采集；四路通信 + 断点续传协议，无线传输零丢包",
-    deepDive:
-      "负责探头硬件原理图/PCB 设计、样机调试及底层软件开发。利用 AG32 内置 CPLD 硬件逻辑生成传感器精密时序，零 CPU 占用完成高频光谱数据采集，配合 DMA 实现高效 Flash 存储；软件基于 FreeRTOS 架构，调用 DSP 库完成 FFT 实时频谱分析；构建 USB、串口及蓝牙/Wi-Fi（透传模式）多路通信架构，设计断点续传协议确保无线传输完整性，支持 Bootloader 固件升级。",
-    specs: [
-      { label: "芯片", value: "AG32 CPLD+MCU" },
-      { label: "通信", value: "USB/串口/BLE/WiFi" },
-      { label: "算法", value: "FFT 实时频谱" },
-      { label: "升级", value: "Bootloader" },
+      { label: "上位机", value: "Qt 自动化校准" },
     ],
     span: "normal",
     featured: true,
+    artifacts: [
+      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 光源亮度/色温/色度检测成品" },
+      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "FPGA + STM32F427 双板原理图 / PCB 3D 渲染" },
+      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "FMC 8080 并口时序 · 示波器实测" },
+      { slot: 4, category: "UI", categoryZh: "界面显示", caption: "LVGL 界面 · 光谱曲线双缓冲无撕裂显示" },
+    ],
+  },
+  {
+    id: "optical-flicker-analyzer",
+    title: "十合一多功能光源频闪测试仪",
+    subtitle: "10-in-1 Optical Flicker Analyzer",
+    category: "检测仪器 / FPGA+DSP",
+    cover:
+      "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
+    status: ["主导架构设计", "十项指标全通过"],
+    tags: ["FPGA (Verilog)", "STM32 Cortex-M4", "FSMC 高速总线", "ARM-DSP", "光电模拟前端"],
+    highlight:
+      "FPGA 状态机驱动高速 ADC + 硬件均值滤波，STM32 经 FSMC 高速吞吐并运行加窗 FFT，精准计算 SVM、PstLM、频闪百分比等 10 项指标，系统底噪降低 25%",
+    deepDive:
+      "主导「FPGA 采集 + STM32 算法分析」架构设计、固件编写与高频模拟前端联调。FPGA 负责状态机驱动高速 ADC 及硬件均值滤波；STM32 经 FSMC 总线高速吞吐数据并运行加窗 FFT 算法，精准计算 SVM、PstLM、频闪百分比等 10 项严苛指标；期间深入排查光电转换微弱信号的阶跃响应问题，通过模拟前端优化将系统底噪降低 25%。",
+    specs: [
+      { label: "指标", value: "10 项" },
+      { label: "总线", value: "FSMC 高速" },
+      { label: "算法", value: "加窗 FFT" },
+      { label: "底噪", value: "↓25%" },
+    ],
+    span: "wide",
+    featured: true,
+    artifacts: [
+      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "整机样机 · 十合一多功能光源频闪测试仪" },
+      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "高速 ADC 光电探测模拟前端原理图 / PCB Layout" },
+      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "FSMC 总线吞吐与 ADC 采样时序 · 示波器/逻辑分析仪实测" },
+      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "测试上位机 · SVM/PstLM/频闪百分比十项指标界面" },
+    ],
+  },
+  {
+    id: "hpcs-550-probe",
+    title: "HPCS-550 高精度光谱分析仪智能探头",
+    subtitle: "HPCS-550 Smart Spectrometer Probe",
+    category: "工业探头 / CPLD 时序",
+    cover:
+      "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
+    status: ["主导首板调测", "工业级稳定输出"],
+    tags: ["AG32 异构芯片", "线性线阵 CCD", "纳秒级低抖动时序", "曝光自适应算法", "Modbus-RTU"],
+    highlight:
+      "CPLD 实现线阵 CCD 纳秒级转移脉冲与微秒级积分时序，消减暗电流与时钟抖动；二分法极速自适应曝光 + 温漂多项式校正，工业级稳定输出",
+    deepDive:
+      "主导智能探头硬件首板调测、CPLD 硬件时序设计与底层高精度自校准算法实现。利用 AG32 内部 CPLD 实现线阵 CCD 纳秒级转移脉冲与微秒级积分时序，从硬件层面消减暗电流与时钟抖动；MCU 端编写二分法极速自适应曝光算法与温漂多项式校正，保证探头在工业现场宽温宽光照条件下输出稳定、可复现的高精度光谱数据。",
+    specs: [
+      { label: "时序", value: "ns 级低抖动" },
+      { label: "传感器", value: "线性线阵 CCD" },
+      { label: "曝光", value: "二分法自适应" },
+      { label: "接口", value: "Modbus-RTU" },
+    ],
+    span: "normal",
+    featured: true,
+    artifacts: [
+      { slot: 1, category: "Prototype", categoryZh: "实物整机", caption: "HPCS-550 智能探头 · 首板样机实拍" },
+      { slot: 2, category: "Schematic / PCB", categoryZh: "原理图与PCB", caption: "线阵 CCD 驱动原理图 / CPLD 时序电路设计" },
+      { slot: 3, category: "Waveform", categoryZh: "波形调测", caption: "CCD 纳秒级转移脉冲与积分时序 · 示波器实测" },
+      { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "上位机 · 自适应曝光与温漂多项式校正输出" },
+    ],
   },
 ];
 

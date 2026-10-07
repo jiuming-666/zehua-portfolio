@@ -7,32 +7,29 @@ import { ArrowRight, ArrowUpRight, BadgeCheck } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import DeepDiveModal from "@/components/DeepDiveModal";
 import { projects, type Project } from "@/lib/projects";
+import type { ProjectWithEvidence } from "@/lib/artifacts";
 
 type ProjectsSectionProps = {
-  /** 眉题 */
   eyebrow?: string;
-  /** 区块标题 */
   title?: string;
-  /** 区块描述 */
   description?: string;
-  /** 展示的项目列表（不传则展示全部） */
-  items?: Project[];
-  /** 是否显示「查看全部项目」入口 */
+  /** 展示的项目列表（须先经服务端 attachEvidence 处理） */
+  items: ProjectWithEvidence[];
   viewAll?: boolean;
 };
 
 /**
  * 项目展示区块（Bento Grid + Deep Dive 弹窗）
- * 首页传 featured 子集 + viewAll；/projects 页传全量。
+ * 首页传精选子集 + viewAll；/projects 页传全量。
  */
 export default function ProjectsSection({
   eyebrow = "Selected Artifacts",
   title = "实物项目展示",
-  description = "不承诺、不包装——每一个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度实拍与研发过程。",
-  items = projects,
+  description = "不承诺、不包装——每一个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度工程实拍与研发过程。",
+  items,
   viewAll = false,
 }: ProjectsSectionProps) {
-  const [active, setActive] = useState<Project | null>(null);
+  const [active, setActive] = useState<ProjectWithEvidence | null>(null);
 
   return (
     <section
@@ -89,15 +86,19 @@ function ProjectCard({
   project,
   onOpen,
 }: {
-  project: Project;
+  project: ProjectWithEvidence;
   onOpen: () => void;
 }) {
+  // photo-1（实物整机）存在时自动作为封面，否则退回数据里的 cover 占位图
+  const prototype = project.evidence.find((e) => e.slot === 1);
+  const coverSrc = prototype?.available ? prototype.src : project.cover;
+
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/70">
       {/* 封面大图：悬停平滑微放大 */}
       <div className="relative aspect-[16/10] overflow-hidden">
         <Image
-          src={project.cover}
+          src={coverSrc}
           alt={project.title}
           fill
           sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
@@ -150,7 +151,7 @@ function ProjectCard({
             onClick={onOpen}
             className="inline-flex items-center gap-1.5 text-sm font-medium text-accent transition-colors duration-200 hover:text-accent-soft"
           >
-            查看高清细节与过程实拍 (Deep Dive)
+            查看工程实拍与研发过程 (Deep Dive)
             <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
           </button>
         </div>
@@ -158,3 +159,5 @@ function ProjectCard({
     </article>
   );
 }
+
+export type { Project };
