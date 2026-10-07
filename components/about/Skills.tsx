@@ -1,5 +1,5 @@
-import { Cpu, Code2, Wrench } from "lucide-react";
-import Reveal from "@/components/Reveal";
+﻿import { Cpu, Code2, Wrench } from "lucide-react";
+import Reveal from "@/components/common/Reveal";
 
 /** 技能矩阵数据（与简历 lib/resume.ts 的 resumeSkills 同源，此处按类目重组展示） */
 const groups = [

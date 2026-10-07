@@ -1,11 +1,11 @@
-"use client";
+﻿"use client";
 
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, ArrowUpRight, BadgeCheck } from "lucide-react";
-import Reveal from "@/components/Reveal";
-import DeepDiveModal from "@/components/DeepDiveModal";
+import Reveal from "@/components/common/Reveal";
+import DeepDiveModal from "@/components/projects/DeepDiveModal";
 import { projects, type Project } from "@/lib/projects";
 import type { ProjectWithEvidence } from "@/lib/artifacts";
 
@@ -16,6 +16,8 @@ type ProjectsSectionProps = {
   /** 展示的项目列表（须先经服务端 attachEvidence 处理） */
   items: ProjectWithEvidence[];
   viewAll?: boolean;
+  /** 是否显示分类筛选器（/projects 页启用） */
+  filterable?: boolean;
 };
 
 /**
@@ -28,8 +30,20 @@ export default function ProjectsSection({
   description = "不承诺、不包装——每一个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度工程实拍与研发过程。",
   items,
   viewAll = false,
+  filterable = false,
 }: ProjectsSectionProps) {
   const [active, setActive] = useState<ProjectWithEvidence | null>(null);
+  const [activeCategory, setActiveCategory] = useState<string>("全部");
+
+  // 从数据自动归纳分类（加新项目无需维护此列表）
+  const categories = [
+    "全部",
+    ...Array.from(new Set(items.map((p) => p.category))),
+  ];
+  const visible =
+    activeCategory === "全部"
+      ? items
+      : items.filter((p) => p.category === activeCategory);
 
   return (
     <section
@@ -48,9 +62,33 @@ export default function ProjectsSection({
         </p>
       </Reveal>
 
+      {/* 分类筛选器 */}
+      {filterable && (
+        <Reveal delay={250}>
+          <div className="mt-8 flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveCategory(cat)}
+                className={`rounded-full px-4 py-1.5 text-sm transition-all duration-200 ${
+                  activeCategory === cat
+                    ? "bg-accent font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.3)]"
+                    : "border border-zinc-800 bg-zinc-900/50 text-zinc-400 backdrop-blur hover:border-zinc-700 hover:text-zinc-100"
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+            <span className="ml-auto hidden items-center text-xs text-zinc-600 sm:flex">
+              {visible.length} / {items.length} 个项目
+            </span>
+          </div>
+        </Reveal>
+      )}
+
       {/* Bento Grid */}
       <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {items.map((project, i) => (
+        {visible.map((project, i) => (
           <Reveal
             key={project.id}
             delay={(i % 3) * 100}

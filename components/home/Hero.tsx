@@ -1,6 +1,6 @@
-import Link from "next/link";
+﻿import Link from "next/link";
 import { ArrowRight, ArrowDownRight } from "lucide-react";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/common/Reveal";
 import { site } from "@/lib/site";
 
 export default function Hero() {

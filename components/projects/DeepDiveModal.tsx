@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useCallback, useEffect, useState } from "react";
 import Image from "next/image";
@@ -6,7 +6,7 @@ import { ImageOff, X, ZoomIn } from "lucide-react";
 import type { ProjectWithEvidence } from "@/lib/artifacts";
 import ArtifactsLightbox, {
   type LightboxArtifact,
-} from "@/components/ArtifactsLightbox";
+} from "@/components/projects/ArtifactsLightbox";
 
 /** Deep Dive 弹窗：工程实拍组图（滑动浏览 + 点击全屏）+ 研发过程 + 硬核规格 */
 export default function DeepDiveModal({

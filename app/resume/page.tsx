@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import ResumeView from "@/components/ResumeView";
+﻿import type { Metadata } from "next";
+import ResumeView from "@/components/resume/ResumeView";
 
 export const metadata: Metadata = {
   title: "在线简历",

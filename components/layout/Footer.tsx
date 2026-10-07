@@ -1,8 +1,8 @@
-"use client";
+﻿"use client";
 
 import Link from "next/link";
 import { Mail, Github } from "lucide-react";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/common/Reveal";
 import { site } from "@/lib/site";
 
 /** Bilibili / 知乎暂无真实主页，先只展示已确认的链接 */

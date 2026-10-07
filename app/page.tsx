@@ -1,6 +1,7 @@
-import Hero from "@/components/Hero";
-import ProjectsSection from "@/components/Projects";
-import Philosophy from "@/components/Philosophy";
+import Hero from "@/components/home/Hero";
+import QuickNav from "@/components/home/QuickNav";
+import ProjectsSection from "@/components/projects/ProjectsSection";
+import Philosophy from "@/components/about/Philosophy";
 import { projects } from "@/lib/projects";
 import { attachEvidence } from "@/lib/artifacts";
 
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <>
       <Hero />
+      <QuickNav />
       {/* 首页仅展示精选项目，完整列表见 /projects */}
       <ProjectsSection
         eyebrow="Selected Artifacts"

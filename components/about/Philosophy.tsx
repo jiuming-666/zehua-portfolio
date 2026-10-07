@@ -1,5 +1,5 @@
-import { Quote } from "lucide-react";
-import Reveal from "@/components/Reveal";
+﻿import { Quote } from "lucide-react";
+import Reveal from "@/components/common/Reveal";
 import { site } from "@/lib/site";
 
 export default function Philosophy() {

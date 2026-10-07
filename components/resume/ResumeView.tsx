@@ -1,4 +1,4 @@
-import {
+﻿import {
   Download,
   User,
   MapPin,
@@ -9,7 +9,7 @@ import {
   FolderKanban,
   Flag,
 } from "lucide-react";
-import Reveal from "@/components/Reveal";
+import Reveal from "@/components/common/Reveal";
 import {
   resumeBasics,
   resumeSkills,

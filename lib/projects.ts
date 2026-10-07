@@ -191,9 +191,3 @@ export const projects: Project[] = [
   },
 ];
 
-export const navLinks = [
-  { label: "项目", href: "#projects", en: "Projects" },
-  { label: "技能栈", href: "#skills", en: "Skills" },
-  { label: "关于我", href: "#about", en: "About" },
-  { label: "联系", href: "#contact", en: "Contact" },
-];

@@ -22,10 +22,28 @@ npm run start   # 运行生产版本
 ## 目录结构
 
 ```
-app/            # 页面入口、布局、全局样式、sitemap / robots
-components/     # Navbar / Hero / Projects / DeepDiveModal / Skills / Philosophy / Footer / Reveal
-lib/            # 站点数据（项目信息集中管理）
-public/         # 静态资源
+app/                        # 路由（每个选项卡一个页面）
+  page.tsx                  #   / 首页（Landing）
+  projects/page.tsx         #   /projects 项目档案（含分类筛选）
+  resume/page.tsx           #   /resume 在线简历
+  about/page.tsx            #   /about 关于我（经历时间线+技能）
+  layout.tsx                #   全局布局（Navbar/Footer 共享）
+  sitemap.ts / robots.ts    #   SEO
+components/
+  layout/                   # Navbar / Footer（全局）
+  common/                   # PageHeader / Reveal（通用件）
+  home/                     # Hero / QuickNav
+  projects/                 # ProjectsSection / DeepDiveModal / ArtifactsLightbox
+  resume/                   # ResumeView
+  about/                    # ExperienceTimeline / Skills / Philosophy
+lib/
+  site.ts                   # 站点唯一配置源（姓名/联系方式/导航注册表）
+  projects.ts               # 项目数据（加项目 = 复制对象改文字）
+  resume.ts                 # 简历结构化数据
+  artifacts.ts              # 工程实拍构建时检测
+public/
+  projects/<id>/            # 工程实拍图（photo-1~4.jpg）
+  resume.pdf                # 简历 PDF
 ```
 
 ## 特性
