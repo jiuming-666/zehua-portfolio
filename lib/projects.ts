@@ -186,7 +186,7 @@ export const projects: Project[] = [
     artifacts: [
       { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "模块化标注原理图 · 大电流供电 / 双卡电路 / 射频匹配 / 电平转换" },
       { slot: 2, category: "PCB Layout", categoryZh: "PCB走线", caption: "顶层/底层双层走线与 50Ω 阻抗铜箔实拍" },
-      { slot: 3, category: "Prototype", categoryZh: "实物样机", caption: "焊接打样实物照片" },
+      { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "PCB 实物 · 焊接打样" },
     ],
   },
 ];
