@@ -1,0 +1,29 @@
+# ── 依赖与构建产物（绝不上传）──────────────────
+node_modules/
+.next/
+out/
+build/
+*.tsbuildinfo
+next-env.d.ts
+
+# ── 环境变量与密钥（绝不上传）──────────────────
+.env
+.env.*
+*.pem
+*.key
+
+# ── 日志与缓存（绝不上传）──────────────────────
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vercel/
+*.log
+
+# ── 编辑器与系统文件（绝不上传）────────────────
+.DS_Store
+Thumbs.db
+.idea/
+
+# ── 说明 ───────────────────────────────────────
+# 上传：app/ components/ lib/ public/（含项目照片与 resume.pdf，网站运行必需）
+# 不上传：以上所有目录。git status 里不应出现 node_modules / .next
