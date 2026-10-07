@@ -1,4 +1,7 @@
-import { Bot, BookOpenText, ShoppingCart, Boxes, ExternalLink, CheckCircle2, Clock } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { Bot, BookOpenText, ShoppingCart, Boxes, ExternalLink, CheckCircle2 } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { agents, agentsPlatform, type Agent } from "@/lib/agents";
 
@@ -17,11 +20,11 @@ export default function AgentsGrid() {
         <div className="mb-8 flex items-start gap-3.5 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 text-sm leading-relaxed text-zinc-400 backdrop-blur sm:p-6">
           <Bot className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
           <p>
-            小提示：这两个小伙伴目前住在我的工作电脑里，
+            小提示：这两个小伙伴运行在我的工作电脑上——
             <span className="text-zinc-300">
-              暂时还不能在网页上直接体验
+              作者本机点「打开控制台」即可直达
             </span>
-            。如果你对它们感兴趣，欢迎通过页面底部的邮箱联系我——
+            ，其他设备暂时连不上。如果你对它们感兴趣，欢迎通过页面底部的邮箱联系我——
             <span className="text-zinc-300">我可以现场演示，或聊聊它们的实现思路</span>
             。
           </p>
@@ -106,8 +109,33 @@ export default function AgentsGrid() {
 
 function AgentCard({ agent }: { agent: Agent }) {
   const Icon = icons[agent.id] ?? Bot;
+  const [connecting, setConnecting] = useState(false);
+  const [unreachable, setUnreachable] = useState(false);
+
+  /**
+   * 点击「打开控制台」：先探测 127.0.0.1 是否可达（约 2s 超时）
+   * 可达（作者本机）→ 直接打开控制台；不可达 → 温和弹窗说明
+   */
+  async function handleOpen() {
+    setConnecting(true);
+    try {
+      await Promise.race([
+        fetch(agent.consoleUrl, { mode: "no-cors" }),
+        new Promise<never>((_, reject) =>
+          setTimeout(() => reject(new Error("timeout")), 2000),
+        ),
+      ]);
+      window.open(agent.consoleUrl, "_blank", "noopener");
+    } catch {
+      setUnreachable(true);
+    } finally {
+      setConnecting(false);
+    }
+  }
+
   return (
-    <article className="group flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-zinc-900/80">
+    <>
+      <article className="group flex h-full flex-col rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur transition-all duration-300 hover:-translate-y-1 hover:border-accent/40 hover:bg-zinc-900/80">
       <div className="flex items-center gap-3">
         <span className="flex h-11 w-11 items-center justify-center rounded-xl border border-accent/25 bg-accent/10">
           <Icon className="h-5 w-5 text-accent" />
@@ -155,24 +183,56 @@ function AgentCard({ agent }: { agent: Agent }) {
       </div>
 
       <div className="mt-auto pt-5">
-        {agent.repoUrl ? (
-          <a
-            href={agent.repoUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_32px_rgba(255,92,26,0.45)]"
-          >
-            <Bot className="h-4 w-4" />
-            查看项目源码
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        ) : (
-          <div className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/60 px-5 py-2.5 text-sm text-zinc-500">
-            <Clock className="h-4 w-4" />
-            源码整理中 · 敬请期待
-          </div>
-        )}
+        <button
+          onClick={handleOpen}
+          disabled={connecting}
+          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_32px_rgba(255,92,26,0.45)] disabled:cursor-wait disabled:opacity-70"
+        >
+          <Bot className="h-4 w-4" />
+          {connecting ? "正在连接…" : "打开控制台"}
+        </button>
+        <p className="mt-2.5 text-center text-[11px] text-zinc-600">
+          运行在作者的工作电脑上 · 其他设备点击会提示无法连接
+        </p>
       </div>
-    </article>
+      </article>
+
+      {/* 连接失败时的温和弹窗 */}
+      {unreachable && (
+        <div
+          className="animate-fade-in fixed inset-0 z-[110] flex items-center justify-center bg-zinc-950/80 p-5 backdrop-blur-md"
+          onClick={() => setUnreachable(false)}
+          role="dialog"
+          aria-modal="true"
+        >
+          <div
+            className="animate-scale-in w-full max-w-md rounded-2xl border border-zinc-800 bg-zinc-950 p-6 shadow-2xl sm:p-7"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-start gap-3.5">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl border border-accent/25 bg-accent/10">
+                <Bot className="h-5 w-5 text-accent" />
+              </span>
+              <div>
+                <h4 className="text-base font-semibold tracking-tight text-zinc-50">
+                  连不上～它还住在作者的电脑里
+                </h4>
+                <p className="mt-2.5 text-sm leading-relaxed text-zinc-400">
+                  这两个智能体目前只在作者的电脑上运行，当前设备暂时无法访问。
+                  如果你有兴趣，欢迎通过页面底部的邮箱联系作者——
+                  <span className="text-zinc-300">现场演示随时安排！</span>
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setUnreachable(false)}
+              className="mt-6 w-full rounded-full bg-zinc-800 py-2.5 text-sm text-zinc-200 transition-colors hover:bg-zinc-700"
+            >
+              知道啦
+            </button>
+          </div>
+        </div>
+      )}
+    </>
   );
 }

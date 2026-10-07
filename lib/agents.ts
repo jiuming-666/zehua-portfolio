@@ -14,6 +14,8 @@ export type Agent = {
   stack: string[];
   /** 状态标签 */
   status: string;
+  /** 本地控制台地址（作者电脑可用；其他设备点击会弹温和提示） */
+  consoleUrl: string;
   /** 代码仓库（可选，开源后填写） */
   repoUrl?: string;
 };
@@ -44,6 +46,8 @@ export const agents: Agent[] = [
     ],
     stack: ["Python", "Playwright", "ReAct", "SSE"],
     status: "已交付 · 持续迭代",
+    /** 本地控制台（作者电脑可用；其他设备点击后会得到温和提示） */
+    consoleUrl: "http://127.0.0.1:8000",
   },
   {
     id: "datasheet-rag",
@@ -58,6 +62,8 @@ export const agents: Agent[] = [
     ],
     stack: ["RAG", "BM25", "多格式解析", "FastAPI", "SSE"],
     status: "已交付 · 持续迭代",
+    /** 本地控制台（作者电脑可用；其他设备点击后会得到温和提示） */
+    consoleUrl: "http://127.0.0.1:8000",
   },
 ];
 
