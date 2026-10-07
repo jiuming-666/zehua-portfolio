@@ -162,6 +162,33 @@ export const projects: Project[] = [
       { slot: 4, category: "UI", categoryZh: "上位机界面", caption: "上位机 · 自适应曝光与温漂多项式校正输出" },
     ],
   },
+  {
+    id: "cat1-dual-sim-telemetry",
+    title: "工业级 Cat.1 蜂窝物联网双卡冗余通信模组",
+    subtitle: "Industrial LTE Cat.1 Dual-SIM Telemetry Core",
+    category: "IoT / 射频硬件",
+    cover:
+      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
+    status: ["独立硬件设计", "射频指标达标"],
+    tags: ["Quectel EG915N", "50Ω 射频阻抗匹配", "eSIM+SIM 双卡冗余", "瞬态脉冲供电设计", "电平转换"],
+    highlight:
+      "Nano-SIM + 贴片 eSIM 双卡防掉线架构；针对 2A 脉冲发射电流设计低跌落稳压滤波电路；π 型天线匹配网络 + 50Ω 阻抗控制，实现 1.8V⇄3.3V/5V 双向电平转换",
+    deepDive:
+      "面向工业物联网与野外遥测场景的高可靠 4G 通信底板，基于 Quectel EG915N 独立完成整板设计。针对蜂窝模块 2A 瞬态脉冲发射电流，设计低跌落稳压与大容量储能滤波电路，杜绝发射瞬间的电压跌落复位；独立设计 Nano-SIM + 贴片 eSIM 双卡防掉线架构，保障野外弱网环境下的链路冗余；完成 π 型天线匹配网络调谐与全链路 50Ω 阻抗控制，并实现 1.8V 至 3.3V/5V 的双向电平转换，兼容主流 MCU 接口。",
+    specs: [
+      { label: "峰值电流", value: "2A 脉冲" },
+      { label: "射频阻抗", value: "50Ω 受控" },
+      { label: "冗余", value: "eSIM + SIM" },
+      { label: "电平", value: "1.8/3.3/5V" },
+    ],
+    span: "wide",
+    featured: true,
+    artifacts: [
+      { slot: 1, category: "Schematic", categoryZh: "原理图", caption: "模块化标注原理图 · 大电流供电 / 双卡电路 / 射频匹配 / 电平转换" },
+      { slot: 2, category: "PCB Layout", categoryZh: "PCB走线", caption: "顶层/底层双层走线与 50Ω 阻抗铜箔实拍" },
+      { slot: 3, category: "Prototype", categoryZh: "实物样机", caption: "焊接打样实物照片" },
+    ],
+  },
 ];
 
 export const navLinks = [
