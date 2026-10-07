@@ -5,6 +5,8 @@ import { Lock } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import VoltageDivider from "@/components/tools/calculators/VoltageDivider";
 import AdcConverter from "@/components/tools/calculators/AdcConverter";
+import HexAsciiConverter from "@/components/tools/calculators/HexAsciiConverter";
+import FloatHexConverter from "@/components/tools/calculators/FloatHexConverter";
 import { tools, type Tool } from "@/lib/tools";
 
 /** 工具面板路由：id → 组件（新增工具在此接一行） */
@@ -14,6 +16,10 @@ function ToolPanel({ id }: { id: string }) {
       return <VoltageDivider />;
     case "adc-convert":
       return <AdcConverter />;
+    case "hex-ascii":
+      return <HexAsciiConverter />;
+    case "float-hex":
+      return <FloatHexConverter />;
     default:
       return null;
   }
