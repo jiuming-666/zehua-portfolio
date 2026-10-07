@@ -1,5 +1,7 @@
-import { ArrowDownRight } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowDownRight } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export default function Hero() {
   return (
@@ -12,45 +14,46 @@ export default function Hero() {
         <Reveal>
           <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-3.5 py-1.5 text-xs text-zinc-400 backdrop-blur">
             <span className="h-1.5 w-1.5 rounded-full bg-neon" />
-            Maker / Hardware &amp; Engineering Builder
+            {site.role} · {site.location}
           </div>
         </Reveal>
 
         <Reveal delay={100}>
           <h1 className="max-w-4xl text-5xl font-bold leading-[1.05] tracking-tight text-zinc-50 sm:text-6xl lg:text-7xl">
-            Turning Digital Bits
+            Writing Firmware
             <br />
-            into{" "}
+            for{" "}
             <span className="bg-gradient-to-r from-accent to-accent-soft bg-clip-text text-transparent">
-              Physical Atoms.
+              Real Machines.
             </span>
           </h1>
         </Reveal>
 
         <Reveal delay={200}>
           <p className="mt-7 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
-            你好，我是江泽华。专注于高保真实物原型研发、硬件创新与全栈实现。
+            你好，我是{site.nameZh}，{site.role}。
             <span className="text-zinc-200">
-              每一个项目都有真实的电路、机械或成品支撑。
+              {site.tagline}——每一个项目都有真实的电路、波形与整机支撑。
             </span>
           </p>
         </Reveal>
 
         <Reveal delay={300}>
           <div className="mt-10 flex flex-col gap-3 sm:flex-row sm:items-center">
-            <a
-              href="#projects"
+            <Link
+              href="/projects"
               className="group inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-medium text-white shadow-[0_0_32px_rgba(255,92,26,0.35)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_44px_rgba(255,92,26,0.5)]"
             >
               浏览实物成果 (View Artifacts)
               <ArrowDownRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:translate-y-0.5" />
-            </a>
-            <a
-              href="#about"
-              className="inline-flex items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/50 px-6 py-3.5 text-sm font-medium text-zinc-300 backdrop-blur transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-100"
+            </Link>
+            <Link
+              href="/resume"
+              className="group inline-flex items-center justify-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-6 py-3.5 text-sm font-medium text-zinc-300 backdrop-blur transition-all duration-200 hover:border-zinc-700 hover:bg-zinc-900 hover:text-zinc-100"
             >
-              关于我的技术理念
-            </a>
+              查看我的简历
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
           </div>
         </Reveal>
 
@@ -58,9 +61,9 @@ export default function Hero() {
         <Reveal delay={400}>
           <dl className="mt-20 grid grid-cols-3 gap-px overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-800 sm:mt-24">
             {[
-              { k: "实物项目", v: "12+", sub: "Prototypes Built" },
-              { k: "独立研发", v: "100%", sub: "From Scratch" },
-              { k: "软硬件栈", v: "Full-Stack", sub: "HW + SW + FW" },
+              { k: "异构架构", v: "MCU+FPGA", sub: "AG32 / HC2000" },
+              { k: "交付链路", v: "全链路", sub: "HW + FW + UI" },
+              { k: "调试方法", v: "波形导向", sub: "Data-Driven" },
             ].map((s) => (
               <div
                 key={s.k}

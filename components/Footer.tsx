@@ -1,7 +1,11 @@
-import { Mail, Github, Linkedin } from "lucide-react";
-import Reveal from "@/components/Reveal";
+"use client";
 
-/** Bilibili / 知乎没有官方 Lucide 图标，用简洁内联 SVG 代替 */
+import Link from "next/link";
+import { Mail, Github } from "lucide-react";
+import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
+
+/** Bilibili / 知乎暂无真实主页，先只展示已确认的链接 */
 function BilibiliIcon({ className }: { className?: string }) {
   return (
     <svg
@@ -20,36 +24,9 @@ function BilibiliIcon({ className }: { className?: string }) {
   );
 }
 
-function ZhihuIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M13 4.5v13.5M13 4.5H5.5A1.5 1.5 0 0 0 4 6v2.5m9-4h5.5A1.5 1.5 0 0 1 20 6v12a1.5 1.5 0 0 1-1.5 1.5H13m-9-8.5 2 9.5m1.5-6.5h4l-1 6.5" />
-    </svg>
-  );
-}
-
 const socials = [
   { label: "GitHub", href: "https://github.com/jiuming-666", Icon: Github },
-  {
-    label: "Bilibili",
-    href: "#contact",
-    Icon: BilibiliIcon,
-  },
-  { label: "知乎", href: "#contact", Icon: ZhihuIcon },
-  {
-    label: "LinkedIn",
-    href: "#contact",
-    Icon: Linkedin,
-  },
+  { label: "Bilibili", href: "#", Icon: BilibiliIcon },
 ];
 
 export default function Footer() {
@@ -64,20 +41,27 @@ export default function Footer() {
             一起做点看得见的东西。
           </h2>
           <p className="mt-4 max-w-lg text-sm leading-relaxed text-zinc-400 sm:text-base">
-            无论是硬件研发岗位、项目合作，还是纯粹想聊聊工程实现，欢迎随时联系。
+            无论是嵌入式岗位机会、项目合作，还是想聊聊软硬件实现，欢迎随时联系。
           </p>
         </Reveal>
 
         <Reveal delay={120}>
-          <a
-            href="mailto:hi@zehuajiang.com"
-            className="group mt-8 inline-flex items-center gap-3 text-xl font-medium tracking-tight text-zinc-100 transition-colors hover:text-accent sm:text-2xl"
-          >
-            <span className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/60 backdrop-blur transition-colors group-hover:border-accent/40">
-              <Mail className="h-5 w-5 text-accent" />
+          <div className="mt-8 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-8">
+            <a
+              href={`mailto:${site.email}`}
+              className="group inline-flex items-center gap-3 text-lg font-medium tracking-tight text-zinc-100 transition-colors hover:text-accent sm:text-xl"
+            >
+              <span className="flex h-11 w-11 items-center justify-center rounded-full border border-zinc-800 bg-zinc-900/60 backdrop-blur transition-colors group-hover:border-accent/40">
+                <Mail className="h-5 w-5 text-accent" />
+              </span>
+              {site.email}
+            </a>
+            <span className="inline-flex items-center gap-2 text-sm text-zinc-400">
+              <span className="text-zinc-600">Tel</span>
+              {site.phone}
+              <span className="text-zinc-600">· {site.location}</span>
             </span>
-            hi@zehuajiang.com
-          </a>
+          </div>
         </Reveal>
 
         <Reveal delay={200}>
@@ -86,7 +70,7 @@ export default function Footer() {
               <a
                 key={label}
                 href={href}
-                target="_blank"
+                target={href.startsWith("http") ? "_blank" : undefined}
                 rel="noopener noreferrer"
                 aria-label={label}
                 title={label}
@@ -99,10 +83,10 @@ export default function Footer() {
         </Reveal>
 
         <div className="mt-16 flex flex-col gap-2 border-t border-zinc-900 pt-8 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
-          <p>© 2025 Jiang Zehua. Built with Next.js &amp; AI.</p>
+          <p>© 2026 {site.nameZh} ({site.nameEn}). Built with Next.js.</p>
           <p className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-neon" />
-            Available for opportunities
+            {site.status}
           </p>
         </div>
       </div>

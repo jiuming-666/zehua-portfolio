@@ -2,12 +2,36 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { ArrowUpRight, BadgeCheck } from "lucide-react";
+import Link from "next/link";
+import { ArrowRight, ArrowUpRight, BadgeCheck } from "lucide-react";
 import Reveal from "@/components/Reveal";
 import DeepDiveModal from "@/components/DeepDiveModal";
 import { projects, type Project } from "@/lib/projects";
 
-export default function Projects() {
+type ProjectsSectionProps = {
+  /** 眉题 */
+  eyebrow?: string;
+  /** 区块标题 */
+  title?: string;
+  /** 区块描述 */
+  description?: string;
+  /** 展示的项目列表（不传则展示全部） */
+  items?: Project[];
+  /** 是否显示「查看全部项目」入口 */
+  viewAll?: boolean;
+};
+
+/**
+ * 项目展示区块（Bento Grid + Deep Dive 弹窗）
+ * 首页传 featured 子集 + viewAll；/projects 页传全量。
+ */
+export default function ProjectsSection({
+  eyebrow = "Selected Artifacts",
+  title = "实物项目展示",
+  description = "不承诺、不包装——每一个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度实拍与研发过程。",
+  items = projects,
+  viewAll = false,
+}: ProjectsSectionProps) {
   const [active, setActive] = useState<Project | null>(null);
 
   return (
@@ -17,20 +41,19 @@ export default function Projects() {
     >
       <Reveal>
         <p className="text-xs font-medium uppercase tracking-[0.2em] text-accent">
-          Selected Artifacts
+          {eyebrow}
         </p>
         <h2 className="mt-3 text-3xl font-bold tracking-tight text-zinc-50 sm:text-5xl">
-          实物项目展示
+          {title}
         </h2>
         <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-          不承诺、不包装——每一张卡片背后都是可现场演示的硬件。
-          点击「Deep Dive」查看多角度实拍与研发过程。
+          {description}
         </p>
       </Reveal>
 
       {/* Bento Grid */}
       <div className="mt-12 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {projects.map((project, i) => (
+        {items.map((project, i) => (
           <Reveal
             key={project.id}
             delay={(i % 3) * 100}
@@ -40,6 +63,20 @@ export default function Projects() {
           </Reveal>
         ))}
       </div>
+
+      {viewAll && (
+        <Reveal delay={150}>
+          <div className="mt-10 flex justify-center">
+            <Link
+              href="/projects"
+              className="group inline-flex items-center gap-2 rounded-full border border-zinc-800 bg-zinc-900/50 px-6 py-3 text-sm font-medium text-zinc-300 backdrop-blur transition-all duration-200 hover:border-zinc-700 hover:text-zinc-100"
+            >
+              查看全部项目与研发细节
+              <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+        </Reveal>
+      )}
 
       <DeepDiveModal project={active} onClose={() => setActive(null)} />
     </section>

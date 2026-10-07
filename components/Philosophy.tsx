@@ -1,5 +1,6 @@
 import { Quote } from "lucide-react";
 import Reveal from "@/components/Reveal";
+import { site } from "@/lib/site";
 
 export default function Philosophy() {
   return (
@@ -20,7 +21,7 @@ export default function Philosophy() {
               我相信「看得见的工程」才是最好的证明。
               <br className="hidden sm:block" />
               <span className="text-zinc-400">
-                代码不会说谎，亲手装配并点亮的硬件更是如此。
+                代码不会说谎，示波器上的波形、亲手点亮的整机更是如此。
               </span>
             </p>
           </blockquote>
@@ -30,7 +31,7 @@ export default function Philosophy() {
           <div className="mt-10 flex flex-col items-center gap-3">
             <div className="h-px w-16 bg-gradient-to-r from-transparent via-accent to-transparent" />
             <p className="text-sm text-zinc-500">
-              江泽华 · Jiang Zehua — Maker / Hardware &amp; Engineering Builder
+              {site.nameZh} · {site.nameEn} — {site.role}
             </p>
           </div>
         </Reveal>

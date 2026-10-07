@@ -20,135 +20,78 @@ export type Project = {
   specs: { label: string; value: string }[];
   /** Bento Grid 尺寸：lg 下占几列 */
   span: "wide" | "normal";
+  /** 是否在首页精选区展示 */
+  featured?: boolean;
 };
 
 export const projects: Project[] = [
   {
-    id: "quadruped",
-    title: "四足仿生机器人",
-    subtitle: "Quadruped Robot · v3",
-    category: "Robotics",
+    id: "spectral-colorimeter",
+    title: "光谱彩色亮度计",
+    subtitle: "Spectral Colorimeter · 整机研发",
+    category: "仪器 / FPGA+MCU",
     cover:
-      "https://images.unsplash.com/photo-1535378917042-10a22c95931a?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
     images: [
       {
-        src: "https://images.unsplash.com/photo-1535378917042-10a22c95931a?q=80&w=1600&auto=format&fit=crop",
-        caption: "整机装配 · 第三代结构",
+        src: "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
+        caption: "整机联调 · 光源色度检测",
       },
       {
         src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
-        caption: "主控 PCB · 双层板自绘走线",
+        caption: "FPGA + STM32F427 双芯片架构",
       },
-      {
-        src: "https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?q=80&w=1600&auto=format&fit=crop",
-        caption: "实验室步态调试现场",
-      },
-    ],
-    status: ["100% 独立研发", "运行正常"],
-    tags: ["STM32", "Altium Designer", "3D Printing", "C++"],
-    highlight: "从0到1完成结构设计与PCB打样，12自由度运动学解算，待机功耗降低 40%",
-    deepDive:
-      "三代迭代：v1 验证舵机方案，v2 重构电源与运动学，v3 采用自研主控板 + IMU 闭环姿态补偿。全部结构件自行建模并 3D 打印，运动学解算与步态规划固件约 6000 行 C++ 代码，全部手写。",
-    specs: [
-      { label: "自由度", value: "12 DoF" },
-      { label: "主控", value: "STM32F407" },
-      { label: "续航", value: "90 min" },
-      { label: "迭代版本", value: "v1 → v3" },
-    ],
-    span: "wide",
-  },
-  {
-    id: "iot-greenhouse",
-    title: "智能温室监测系统",
-    subtitle: "IoT Environmental Station",
-    category: "IoT / Embedded",
-    cover:
-      "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
-    images: [
-      {
-        src: "https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=1600&auto=format&fit=crop",
-        caption: "传感器节点主板 · 已投产 20 片",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1581092160562-40aa08e78837?q=80&w=1600&auto=format&fit=crop",
-        caption: "LoRa 长距离链路实测",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop",
-        caption: "云端数据看板",
-      },
-    ],
-    status: ["已投产", "已部署运行 8 个月"],
-    tags: ["ESP32", "LoRa", "Python", "React"],
-    highlight:
-      "6 节点组网 + 云端看板全栈交付，LoRa 视距通信 2.1km，误码率 < 0.3%",
-    deepDive:
-      "从传感器选型、电源树设计到外壳注塑替代方案（3D 打印 + 后处理）独立完成。自建 MQTT → 时序数据库 → Web 看板的数据链路，前端使用 React 实现 10s 级实时刷新。",
-    specs: [
-      { label: "节点数", value: "6 nodes" },
-      { label: "通信距离", value: "2.1 km" },
-      { label: "采集周期", value: "10 s" },
-      { label: "运行时长", value: "8 mo+" },
-    ],
-    span: "normal",
-  },
-  {
-    id: "portable-instrument",
-    title: "手持式信号分析仪",
-    subtitle: "Portable Signal Analyzer",
-    category: "Instrumentation",
-    cover:
-      "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
-    images: [
       {
         src: "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
-        caption: "整机与测试工装",
+        caption: "LVGL 界面 · 双缓冲防撕裂调试",
+      },
+    ],
+    status: ["100% 全链路参与", "已落地产线"],
+    tags: ["HC2000 FPGA", "STM32F427", "Verilog", "LVGL", "C++/Qt"],
+    highlight:
+      "「FPGA采集 + MCU控制 + Qt上位机」三维架构，LVGL 双缓冲彻底解决高刷新率画面撕裂，自研上位机实现自动化测试",
+    deepDive:
+      "负责 FPGA 端基于 Verilog 状态机实现 CCD 传感器的精密驱动与高速采样；MCU 端利用 FMC 总线以 8080 并口驱动屏幕，通过 LVGL 结合双缓冲区机制解决高刷新率下光谱曲线绘制的画面撕裂；基于 C++/Qt 自研 PC 端测试上位机，实现光谱波形实时绘制、参数校准及自动化测试，大幅提升系统联调效率。",
+    specs: [
+      { label: "架构", value: "FPGA+MCU+Qt" },
+      { label: "传感器", value: "CCD" },
+      { label: "显示", value: "LVGL 双缓冲" },
+      { label: "上位机", value: "C++/Qt 自研" },
+    ],
+    span: "wide",
+    featured: true,
+  },
+  {
+    id: "wireless-spectrometer",
+    title: "无线光谱照度计",
+    subtitle: "Wireless Spectrometer · 便携探头",
+    category: "IoT / 异构芯片",
+    cover:
+      "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
+    images: [
+      {
+        src: "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
+        caption: "便携式光谱采集探头",
       },
       {
         src: "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
-        caption: "模拟前端调试 · 示波器实测",
+        caption: "CPLD 时序 · 零 CPU 占用采集验证",
       },
     ],
-    status: ["100% 独立研发", "功能验证通过"],
-    tags: ["Altium Designer", "STM32", "C", "Signal Processing"],
-    highlight: "4 通道采集，最高 2MSa/s 采样率，BOM 成本控制在商用方案 1/6",
+    status: ["100% 独立负责硬件+底层", "无线传输完整可靠"],
+    tags: ["AG32 CPLD+MCU", "FreeRTOS", "DSP/FFT", "BLE/Wi-Fi", "Bootloader"],
+    highlight:
+      "CPLD 硬件逻辑生成精密时序，零 CPU 占用完成高频光谱采集；四路通信 + 断点续传协议，无线传输零丢包",
     deepDive:
-      "自研模拟前端（程控增益 + 抗混叠滤波）与 DMA 高速采样链路。使用逻辑分析仪与示波器完成全套时序验证，机壳采用 CNC 加工铝合金外壳。",
+      "负责探头硬件原理图/PCB 设计、样机调试及底层软件开发。利用 AG32 内置 CPLD 硬件逻辑生成传感器精密时序，零 CPU 占用完成高频光谱数据采集，配合 DMA 实现高效 Flash 存储；软件基于 FreeRTOS 架构，调用 DSP 库完成 FFT 实时频谱分析；构建 USB、串口及蓝牙/Wi-Fi（透传模式）多路通信架构，设计断点续传协议确保无线传输完整性，支持 Bootloader 固件升级。",
     specs: [
-      { label: "通道", value: "4 CH" },
-      { label: "采样率", value: "2 MSa/s" },
-      { label: "成本", value: "1/6 商用" },
+      { label: "芯片", value: "AG32 CPLD+MCU" },
+      { label: "通信", value: "USB/串口/BLE/WiFi" },
+      { label: "算法", value: "FFT 实时频谱" },
+      { label: "升级", value: "Bootloader" },
     ],
     span: "normal",
-  },
-  {
-    id: "cnc-fabrication",
-    title: "桌面级 CNC 工装平台",
-    subtitle: "Desktop CNC Workbench",
-    category: "Fabrication",
-    cover:
-      "https://images.unsplash.com/photo-1563520239648-a24e51d4b570?q=80&w=1600&auto=format&fit=crop",
-    images: [
-      {
-        src: "https://images.unsplash.com/photo-1563520239648-a24e51d4b570?q=80&w=1600&auto=format&fit=crop",
-        caption: "整机刚性测试",
-      },
-      {
-        src: "https://images.unsplash.com/photo-1615947914616-65cc1c1b9dc2?q=80&w=1600&auto=format&fit=crop",
-        caption: "G代码加工现场",
-      },
-    ],
-    status: ["在役使用", "重复定位 ±0.05mm"],
-    tags: ["SolidWorks", "GRBL", "CNC", "Arduino"],
-    highlight: "自建加工能力闭环，作品集内全部样机外壳均由该平台完成",
-    deepDive:
-      "为解决样机外壳与结构件的外协周期问题，自建桌面 CNC 平台：SolidWorks 结构设计 → GRBL 固件定制 → 加工参数库沉淀，将单件外壳交付周期从 2 周压缩到 1 天。",
-    specs: [
-      { label: "行程", value: "300×300mm" },
-      { label: "定位精度", value: "±0.05 mm" },
-      { label: "主轴", value: "500 W" },
-    ],
-    span: "wide",
+    featured: true,
   },
 ];
 

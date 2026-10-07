@@ -1,5 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const inter = Inter({
@@ -9,28 +12,31 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://zehuajiang.com"),
-  title: "Jiang Zehua — Hardware & Engineering Builder",
-  description:
-    "江泽华 · 硬件与全栈构建者。高保真实物原型研发、硬件创新与全栈实现。每一个项目都有真实的电路、机械或成品支撑。",
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.nameEn} — ${site.role}`,
+    template: `%s — ${site.nameZh}`,
+  },
+  description: `${site.nameZh} · ${site.role}。${site.tagline}。每一个项目都有真实的电路、波形与整机支撑。`,
   keywords: [
+    "蒋泽华",
     "Jiang Zehua",
-    "江泽华",
-    "Hardware Engineer",
-    "Embedded Systems",
-    "PCB Design",
+    "嵌入式软件工程师",
+    "STM32",
+    "FPGA",
+    "FreeRTOS",
+    "MCU",
     "Portfolio",
   ],
   alternates: {
-    canonical: "https://zehuajiang.com",
+    canonical: site.url,
   },
   openGraph: {
     type: "website",
-    url: "https://zehuajiang.com",
-    siteName: "Jiang Zehua — Engineering Hub",
-    title: "Jiang Zehua — Hardware & Engineering Builder",
-    description:
-      "江泽华 · 硬件与全栈构建者。每一个项目都有真实的电路、机械或成品支撑。",
+    url: site.url,
+    siteName: `${site.nameEn} — Engineering Hub`,
+    title: `${site.nameEn} — ${site.role}`,
+    description: `${site.nameZh} · ${site.role}。每一个项目都有真实的电路、波形与整机支撑。`,
     locale: "zh_CN",
   },
 };
@@ -46,7 +52,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN" className={inter.variable}>
-      <body className="font-sans">{children}</body>
+      <body className="font-sans">
+        <Navbar />
+        <main className="relative overflow-x-clip">{children}</main>
+        <Footer />
+      </body>
     </html>
   );
 }

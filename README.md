@@ -37,5 +37,6 @@ public/         # 静态资源
 
 ## 联系
 
-- 邮箱：hi@zehuajiang.com
+- 邮箱：909969231@qq.com
+- 电话：19294554827（浙江 杭州）
 - GitHub：[@jiuming-666](https://github.com/jiuming-666)

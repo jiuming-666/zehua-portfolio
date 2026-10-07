@@ -1,19 +1,21 @@
-import Navbar from "@/components/Navbar";
 import Hero from "@/components/Hero";
-import Projects from "@/components/Projects";
-import Skills from "@/components/Skills";
+import ProjectsSection from "@/components/Projects";
 import Philosophy from "@/components/Philosophy";
-import Footer from "@/components/Footer";
+import { projects } from "@/lib/projects";
 
 export default function Home() {
   return (
-    <main className="relative overflow-x-clip">
-      <Navbar />
+    <>
       <Hero />
-      <Projects />
-      <Skills />
+      {/* 首页仅展示精选项目，完整列表见 /projects */}
+      <ProjectsSection
+        eyebrow="Selected Artifacts"
+        title="精选实物项目"
+        description="每个项目都有真实的电路、波形与整机支撑。点击「Deep Dive」查看多角度实拍与研发过程。"
+        items={projects.filter((p) => p.featured)}
+        viewAll
+      />
       <Philosophy />
-      <Footer />
-    </main>
+    </>
   );
 }

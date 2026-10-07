@@ -1,39 +1,41 @@
 import { Cpu, Code2, Wrench } from "lucide-react";
 import Reveal from "@/components/Reveal";
 
+/** 技能矩阵数据（与简历 lib/resume.ts 的 resumeSkills 同源，此处按类目重组展示） */
 const groups = [
   {
     icon: Cpu,
-    title: "硬件与机械",
-    en: "Hardware & Fabrication",
+    title: "芯片与硬件",
+    en: "Chips & Hardware",
     items: [
-      "PCB 设计（Altium Designer / 嘉立创EDA）",
-      "单片机系统（STM32 / ESP32 / Arduino）",
-      "3D 建模与打印（SolidWorks / FDM / 光固化）",
-      "CNC 加工与工装设计",
-      "整机装配、调试与可靠性验证",
+      "STM32 (ARM) / AG32 (RISC-V) 系列芯片架构",
+      "DMA、中断机制与时序控制",
+      "SPI / I2C / UART / USB-CDC 总线外设驱动",
+      "Altium Designer 原理图与 PCB 设计",
+      "首板样机焊接、Bring-up 与软硬件联调",
     ],
   },
   {
     icon: Code2,
-    title: "软件与算法",
-    en: "Software & Firmware",
+    title: "固件与软件",
+    en: "Firmware & Software",
     items: [
-      "嵌入式 C / C++ 固件开发",
-      "Python（数据处理、上位机、自动化测试）",
-      "AI 工具链辅助研发（代码生成 / 视觉方案）",
-      "前端全栈（React / Next.js / Node.js）",
+      "嵌入式 C/C++ 固件开发",
+      "FreeRTOS：多任务调度、信号量/队列、内存管理",
+      "Bootloader 固件升级与无线断点续传协议设计",
+      "ARM-DSP 库（FFT）实时频谱分析",
+      "LVGL 图形界面移植与双缓冲优化 · C++/Qt 上位机",
     ],
   },
   {
     icon: Wrench,
-    title: "研发工具",
-    en: "Lab Tools",
+    title: "调试与工具",
+    en: "Debug & Lab Tools",
     items: [
-      "示波器 / 逻辑分析仪 / 电源负载测试",
-      "Git 版本管理与硬件工程文档沉淀",
-      "SolidWorks 仿真与结构验证",
-      "万用表 · 焊台 · 回流焊 · 复测工装",
+      "示波器 / 逻辑分析仪 / SWD / JTAG 底层抓包",
+      "电子负载与电源纹波、效率测试",
+      "Verilog / FPGA 时序逻辑（MCU+FPGA 异构协同）",
+      "数据与波形导向的疑难问题定位",
     ],
   },
 ];
@@ -53,7 +55,7 @@ export default function Skills() {
             技能与工具矩阵
           </h2>
           <p className="mt-4 max-w-xl text-sm leading-relaxed text-zinc-400 sm:text-base">
-            不用进度条衡量能力——以下每一项，都对应着上面项目区的真实产出。
+            不用进度条衡量能力——以下每一项，都对应着项目区的真实产出。
           </p>
         </Reveal>
 
