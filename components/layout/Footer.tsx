@@ -1,33 +1,8 @@
 ﻿"use client";
 
-import Link from "next/link";
-import { Mail, Github } from "lucide-react";
+import { Mail } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { site } from "@/lib/site";
-
-/** Bilibili / 知乎暂无真实主页，先只展示已确认的链接 */
-function BilibiliIcon({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-    >
-      <path d="M7.17 4.5 4.5 7.5m12.33-3 2.67 3M4 7.5h16a1.5 1.5 0 0 1 1.5 1.5v9A1.5 1.5 0 0 1 20 19.5H4A1.5 1.5 0 0 1 2.5 18V9A1.5 1.5 0 0 1 4 7.5Z" />
-      <path d="M8.5 11.5v3m7-3v3" />
-    </svg>
-  );
-}
-
-const socials = [
-  { label: "GitHub", href: "https://github.com/jiuming-666", Icon: Github },
-  { label: "Bilibili", href: "#", Icon: BilibiliIcon },
-];
 
 export default function Footer() {
   return (
@@ -61,24 +36,6 @@ export default function Footer() {
               {site.phone}
               <span className="text-zinc-600">· {site.location}</span>
             </span>
-          </div>
-        </Reveal>
-
-        <Reveal delay={200}>
-          <div className="mt-10 flex items-center gap-3">
-            {socials.map(({ label, href, Icon }) => (
-              <a
-                key={label}
-                href={href}
-                target={href.startsWith("http") ? "_blank" : undefined}
-                rel="noopener noreferrer"
-                aria-label={label}
-                title={label}
-                className="flex h-10 w-10 items-center justify-center rounded-xl border border-zinc-800 bg-zinc-900/50 text-zinc-400 backdrop-blur transition-all duration-200 hover:border-zinc-600 hover:text-zinc-100"
-              >
-                <Icon className="h-[18px] w-[18px]" />
-              </a>
-            ))}
           </div>
         </Reveal>
 
