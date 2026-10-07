@@ -82,7 +82,7 @@ export const projects: Project[] = [
     category: "IoT / 异构芯片",
     domain: "hw-sw",
     cover:
-      "https://images.unsplash.com/photo-1576086213369-97a306d36557?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1600&auto=format&fit=crop",
     status: ["独立全链路交付", "无线 OTA 已验证"],
     tags: ["AG32 (MCU+CPLD)", "FreeRTOS", "ARM-DSP (FFT)", "多模无线通信", "Bootloader"],
     highlight:
@@ -107,7 +107,7 @@ export const projects: Project[] = [
     category: "仪器 / FPGA+MCU",
     domain: "hw-sw",
     cover:
-      "https://images.unsplash.com/photo-1554475900-0a0350e3fc7b?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=1600&auto=format&fit=crop",
     status: ["FPGA+MCU+Qt 三维架构", "已落地产线"],
     tags: ["HC2000 FPGA", "STM32F427", "LVGL 双缓冲", "FMC 并口", "C++/Qt 上位机"],
     highlight:
@@ -132,7 +132,7 @@ export const projects: Project[] = [
     category: "检测仪器 / FPGA+DSP",
     domain: "hw-sw",
     cover:
-      "https://images.unsplash.com/photo-1581092921461-eab62e97a780?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=1600&auto=format&fit=crop",
     status: ["主导架构设计", "十项指标全通过"],
     tags: ["FPGA (Verilog)", "STM32 Cortex-M4", "FSMC 高速总线", "ARM-DSP", "光电模拟前端"],
     highlight:
@@ -157,7 +157,7 @@ export const projects: Project[] = [
     category: "工业探头 / CPLD 时序",
     domain: "sw",
     cover:
-      "https://images.unsplash.com/photo-1553406830-ef2513450d76?q=80&w=1600&auto=format&fit=crop",
+      "https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?q=80&w=1600&auto=format&fit=crop",
     status: ["主导首板调测", "工业级稳定输出"],
     tags: ["AG32 异构芯片", "线性线阵 CCD", "纳秒级低抖动时序", "曝光自适应算法", "Modbus-RTU"],
     highlight:
