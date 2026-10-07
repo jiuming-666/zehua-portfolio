@@ -41,10 +41,7 @@ export default function Footer() {
 
         <div className="mt-16 flex flex-col gap-2 border-t border-zinc-900 pt-8 text-xs text-zinc-600 sm:flex-row sm:items-center sm:justify-between">
           <p>© 2026 {site.nameZh} ({site.nameEn}). Built with Next.js.</p>
-          <p className="flex items-center gap-1.5">
-            <span className="h-1.5 w-1.5 rounded-full bg-neon" />
-            {site.status}
-          </p>
+          <p>{site.location}</p>
         </div>
       </div>
     </footer>

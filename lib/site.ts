@@ -15,8 +15,6 @@ export const site = {
   tagline: "从原理图、底层驱动、FPGA 逻辑到 LVGL/Qt 界面的全链路交付能力",
   /** 现居 */
   location: "浙江 · 杭州",
-  /** 求职状态（导航栏状态灯文案） */
-  status: "在职看机会 · Open to opportunities",
   /** 联系方式 */
   email: "909969231@qq.com",
   phone: "19294554827",

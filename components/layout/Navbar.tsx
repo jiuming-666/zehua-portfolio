@@ -33,17 +33,10 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 sm:px-8">
-        {/* Logo + 状态灯 */}
+        {/* Logo */}
         <Link href="/" className="flex items-center gap-3">
           <span className="text-sm font-semibold tracking-tight text-zinc-100">
             {site.nameEn.toUpperCase().replace(" ", "\u00A0")}
-          </span>
-          <span className="hidden items-center gap-1.5 rounded-full border border-zinc-800 bg-zinc-900/60 px-2.5 py-1 text-[11px] text-zinc-400 lg:flex">
-            <span className="relative flex h-1.5 w-1.5">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-neon opacity-75" />
-              <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-neon" />
-            </span>
-            {site.status}
           </span>
         </Link>
 
