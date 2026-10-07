@@ -28,6 +28,7 @@ export const site = {
 export const navPages = [
   { href: "/", label: "首页", en: "Home" },
   { href: "/projects", label: "项目", en: "Projects" },
+  { href: "/agents", label: "智能体", en: "Agents" },
   { href: "/resume", label: "简历", en: "Resume" },
   { href: "/about", label: "关于", en: "About" },
 ] as const;

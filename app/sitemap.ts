@@ -2,7 +2,7 @@ import type { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const base = "https://zehuajiang.com";
-  const pages = ["", "/projects", "/resume", "/about"];
+  const pages = ["", "/projects", "/agents", "/resume", "/about"];
   return pages.map((path) => ({
     url: `${base}${path}`,
     lastModified: new Date(),

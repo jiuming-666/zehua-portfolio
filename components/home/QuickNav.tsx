@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { LayoutGrid, FileText, User, FolderKanban } from "lucide-react";
+import { FolderKanban, FileText, User, Bot } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
+import { agentsEntry } from "@/lib/agents";
 
 const tiles = [
   {
@@ -9,6 +10,13 @@ const tiles = [
     title: "实物项目",
     en: "Projects",
     desc: "5 个整机级项目，含工程实拍证据与研发过程",
+  },
+  {
+    href: agentsEntry.href,
+    icon: Bot,
+    title: agentsEntry.title,
+    en: agentsEntry.en,
+    desc: agentsEntry.desc,
   },
   {
     href: "/resume",
@@ -23,13 +31,6 @@ const tiles = [
     title: "关于我",
     en: "About",
     desc: "工作经历时间线、技术理念与能力全景",
-  },
-  {
-    href: "#contact",
-    icon: LayoutGrid,
-    title: "联系方式",
-    en: "Contact",
-    desc: "页面底部可直接邮件或电话联系",
   },
 ];
 
