@@ -1,4 +1,4 @@
-/**
+﻿/**
  * 简历结构化数据（与 /resume 页面一一对应）
  * 更新简历时只需修改本文件，页面自动渲染。
  */
@@ -11,7 +11,7 @@ export const resumeBasics = {
   political: "中共党员",
   phone: "19294554827",
   email: "909969231@qq.com",
-  intent: "嵌入式软件工程师（MCU 方向）",
+  intent: "嵌入式软硬件工程师",
 };
 
 export const resumeSkills = [

@@ -15,22 +15,6 @@ const icons: Record<string, typeof Bot> = {
 export default function AgentsGrid() {
   return (
     <section className="mx-auto max-w-6xl px-5 pb-24 sm:px-8">
-      {/* ── 温和提示：本地部署，暂不可在线体验 ── */}
-      <Reveal>
-        <div className="mb-8 flex items-start gap-3.5 rounded-2xl border border-zinc-800 bg-zinc-900/40 p-5 text-sm leading-relaxed text-zinc-400 backdrop-blur sm:p-6">
-          <Bot className="mt-0.5 h-5 w-5 shrink-0 text-accent" />
-          <p>
-            小提示：这两个小伙伴运行在我的工作电脑上——
-            <span className="text-zinc-300">
-              作者本机点「打开控制台」即可直达
-            </span>
-            ，其他设备暂时连不上。如果你对它们感兴趣，欢迎通过页面底部的邮箱联系我——
-            <span className="text-zinc-300">我可以现场演示，或聊聊它们的实现思路</span>
-            。
-          </p>
-        </div>
-      </Reveal>
-
       {/* ── 平台框架卡 ── */}
       <Reveal>
         <div className="relative overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 p-6 backdrop-blur sm:p-8">
@@ -191,9 +175,6 @@ function AgentCard({ agent }: { agent: Agent }) {
           <Bot className="h-4 w-4" />
           {connecting ? "正在连接…" : "打开控制台"}
         </button>
-        <p className="mt-2.5 text-center text-[11px] text-zinc-600">
-          运行在作者的工作电脑上 · 其他设备点击会提示无法连接
-        </p>
       </div>
       </article>
 

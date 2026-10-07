@@ -21,7 +21,7 @@ export const metadata: Metadata = {
   keywords: [
     "蒋泽华",
     "Jiang Zehua",
-    "嵌入式软件工程师",
+    "嵌入式软硬件工程师",
     "STM32",
     "FPGA",
     "FreeRTOS",
