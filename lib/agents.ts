@@ -14,11 +14,7 @@ export type Agent = {
   stack: string[];
   /** 状态标签 */
   status: string;
-  /** 本地控制台地址（启动后可从本站直达） */
-  consoleUrl: string;
-  /** 启动命令 */
-  launchCmd: string;
-  /** 代码仓库（可选） */
+  /** 代码仓库（可选，开源后填写） */
   repoUrl?: string;
 };
 
@@ -47,9 +43,7 @@ export const agents: Agent[] = [
       "真实浏览器抓取：登录态保持与风控处理，价格库存实时",
     ],
     stack: ["Python", "Playwright", "ReAct", "SSE"],
-    status: "随叫随到",
-    consoleUrl: "http://127.0.0.1:8000",
-    launchCmd: "python Main.py",
+    status: "已交付 · 持续迭代",
   },
   {
     id: "datasheet-rag",
@@ -63,9 +57,7 @@ export const agents: Agent[] = [
       "网页拖拽上传资料，索引状态与失败原因透明可见",
     ],
     stack: ["RAG", "BM25", "多格式解析", "FastAPI", "SSE"],
-    status: "随叫随到",
-    consoleUrl: "http://127.0.0.1:8000",
-    launchCmd: "python Main.py",
+    status: "已交付 · 持续迭代",
   },
 ];
 
@@ -74,5 +66,5 @@ export const agentsEntry = {
   href: "/agents",
   title: "我的智能体",
   en: "AI Agents",
-  desc: "自研多智能体工作台：选型助手、手册答疑，启动后一键直达控制台",
+  desc: "自研多智能体工作台：选型助手、手册答疑精灵",
 };

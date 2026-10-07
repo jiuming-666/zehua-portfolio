@@ -1,4 +1,4 @@
-import { Bot, BookOpenText, ShoppingCart, Boxes, ExternalLink, Terminal, CheckCircle2 } from "lucide-react";
+import { Bot, BookOpenText, ShoppingCart, Boxes, ExternalLink, CheckCircle2, Clock } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import { agents, agentsPlatform, type Agent } from "@/lib/agents";
 
@@ -69,12 +69,9 @@ export default function AgentsGrid() {
               Launchpad
             </p>
             <h2 className="mt-2 text-2xl font-bold tracking-tight text-zinc-50 sm:text-3xl">
-              智能体发射台
+              智能体矩阵
             </h2>
           </div>
-          <p className="hidden text-xs text-zinc-600 sm:block">
-            本地启动后，点「打开控制台」直达
-          </p>
         </div>
       </Reveal>
 
@@ -85,28 +82,6 @@ export default function AgentsGrid() {
           </Reveal>
         ))}
       </div>
-
-      {/* ── 本地启动提示 ── */}
-      <Reveal delay={150}>
-        <div className="mt-8 rounded-2xl border border-dashed border-zinc-700/80 bg-zinc-900/40 p-5 text-sm text-zinc-400 sm:p-6">
-          <p className="flex items-center gap-2 font-medium text-zinc-300">
-            <Terminal className="h-4 w-4 text-accent" />
-            还没启动？两步起飞：
-          </p>
-          <div className="mt-3 grid gap-2 sm:grid-cols-2">
-            <code className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-xs text-zinc-300">
-              <span className="text-zinc-600"># 1. 启动工作台</span>
-              <br />
-              python Main.py
-            </code>
-            <code className="rounded-lg border border-zinc-800 bg-zinc-950/80 px-3 py-2 text-xs text-zinc-300">
-              <span className="text-zinc-600"># 2. 浏览器自动打开</span>
-              <br />
-              http://127.0.0.1:8000
-            </code>
-          </div>
-        </div>
-      </Reveal>
     </section>
   );
 }
@@ -164,19 +139,23 @@ function AgentCard({ agent }: { agent: Agent }) {
       </div>
 
       <div className="mt-auto pt-5">
-        <a
-          href={agent.consoleUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_32px_rgba(255,92,26,0.45)]"
-        >
-          <Bot className="h-4 w-4" />
-          打开控制台
-          <ExternalLink className="h-3.5 w-3.5" />
-        </a>
-        <p className="mt-2.5 text-center text-[11px] text-zinc-600">
-          需先本地启动：<code className="text-zinc-500">{agent.launchCmd}</code>
-        </p>
+        {agent.repoUrl ? (
+          <a
+            href={agent.repoUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white shadow-[0_0_24px_rgba(255,92,26,0.3)] transition-all duration-200 hover:bg-accent-soft hover:shadow-[0_0_32px_rgba(255,92,26,0.45)]"
+          >
+            <Bot className="h-4 w-4" />
+            查看项目源码
+            <ExternalLink className="h-3.5 w-3.5" />
+          </a>
+        ) : (
+          <div className="flex w-full items-center justify-center gap-2 rounded-full border border-zinc-800 bg-zinc-950/60 px-5 py-2.5 text-sm text-zinc-500">
+            <Clock className="h-4 w-4" />
+            源码整理中 · 敬请期待
+          </div>
+        )}
       </div>
     </article>
   );

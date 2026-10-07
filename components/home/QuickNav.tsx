@@ -9,7 +9,7 @@ const tiles = [
     icon: FolderKanban,
     title: "实物项目",
     en: "Projects",
-    desc: "5 个整机级项目，含工程实拍证据与研发过程",
+    desc: "整机级工程项目，含工程实拍证据与研发过程",
   },
   {
     href: agentsEntry.href,

@@ -16,7 +16,7 @@ export default function AgentsPage() {
         eyebrow="AI Agents · 自研智能体"
         icon={Bot}
         title="我的智能体工作台"
-        description="我把日常研发里重复的活儿交给自研智能体：元器件选型、手册答疑。全部基于自建 ReAct 框架与本地 RAG，数据真实可溯源。启动本地工作台后，可从本页一键直达控制台。"
+        description="我把日常研发里重复的活儿交给自研智能体：元器件选型、手册答疑。全部基于自建 ReAct 框架与本地 RAG，数据真实可溯源、永不编造。"
       />
       <div className="pt-10">
         <AgentsGrid />

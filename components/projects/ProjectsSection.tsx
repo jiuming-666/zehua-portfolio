@@ -79,9 +79,6 @@ export default function ProjectsSection({
                 {cat}
               </button>
             ))}
-            <span className="ml-auto hidden items-center text-xs text-zinc-600 sm:flex">
-              {visible.length} / {items.length} 个项目
-            </span>
           </div>
         </Reveal>
       )}
