@@ -113,16 +113,41 @@ function ProjectCard({
 
   return (
     <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-zinc-800 bg-zinc-900/50 backdrop-blur transition-all duration-300 hover:border-zinc-700 hover:bg-zinc-900/70">
-      {/* 封面大图：悬停平滑微放大 */}
-      <div className="relative aspect-[16/10] overflow-hidden">
-        <Image
-          src={coverSrc}
-          alt={project.title}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
-          className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent" />
+      {/* 封面：涉密项目用艺术字排版，否则显示图片（悬停微放大） */}
+      <div
+        className={`relative aspect-[16/10] overflow-hidden ${
+          project.typo
+            ? "bg-gradient-to-br from-zinc-900 via-zinc-950 to-black"
+            : ""
+        }`}
+      >
+        {project.typo ? (
+          <>
+            <div className="bg-grid absolute inset-0" />
+            <div className="pointer-events-none absolute -bottom-14 -right-14 h-48 w-48 rounded-full bg-accent/15 blur-3xl" />
+            <div className="absolute inset-0 flex flex-col items-center justify-center gap-2.5 px-6 text-center">
+              <span className="text-[10px] uppercase tracking-[0.3em] text-accent">
+                {project.subtitle}
+              </span>
+              <span className="text-xl font-bold leading-snug tracking-tight text-zinc-100 sm:text-2xl">
+                {project.title}
+              </span>
+              <span className="mt-1 h-px w-12 bg-gradient-to-r from-transparent via-accent to-transparent" />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/60 via-transparent to-transparent" />
+          </>
+        ) : (
+          <>
+            <Image
+              src={coverSrc}
+              alt={project.title}
+              fill
+              sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 66vw"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.05]"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/70 via-transparent to-transparent" />
+          </>
+        )}
         {/* 状态标签 */}
         <div className="absolute left-3 top-3 flex flex-wrap gap-1.5">
           {project.status.map((s) => (

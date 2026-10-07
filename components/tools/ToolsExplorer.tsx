@@ -1,10 +1,23 @@
 "use client";
 
 import { useState } from "react";
-import { Bot, Lock } from "lucide-react";
+import { Lock } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
 import VoltageDivider from "@/components/tools/calculators/VoltageDivider";
+import AdcConverter from "@/components/tools/calculators/AdcConverter";
 import { tools, type Tool } from "@/lib/tools";
+
+/** 工具面板路由：id → 组件（新增工具在此接一行） */
+function ToolPanel({ id }: { id: string }) {
+  switch (id) {
+    case "voltage-divider":
+      return <VoltageDivider />;
+    case "adc-convert":
+      return <AdcConverter />;
+    default:
+      return null;
+  }
+}
 
 /** /tools 页面主体：工具目录 + 点击展开工具面板（数据源 lib/tools.ts） */
 export default function ToolsExplorer() {
@@ -24,7 +37,7 @@ export default function ToolsExplorer() {
               </p>
               <span className="text-sm text-zinc-300">{active.name}</span>
             </div>
-            {active.id === "voltage-divider" && <VoltageDivider />}
+            <ToolPanel id={active.id} />
           </div>
         </Reveal>
       )}
@@ -79,24 +92,6 @@ export default function ToolsExplorer() {
         ))}
 
         {/* 未来入口预告：智能体 */}
-        <Reveal delay={80}>
-          <div className="flex h-full flex-col rounded-2xl border border-dashed border-zinc-700/80 bg-zinc-950/40 p-5">
-            <div className="flex items-center justify-between gap-2">
-              <h3 className="font-semibold tracking-tight text-zinc-50">
-                我的智能体
-              </h3>
-              <Bot className="h-4 w-4 text-accent" />
-            </div>
-            <p className="mt-2.5 text-sm leading-relaxed text-zinc-500">
-              选型助手与手册答疑精灵已上线，
-              <span className="text-zinc-400">部署到云端后将接入这里直接使用</span>
-              。
-            </p>
-            <span className="mt-auto pt-3 text-[11px] text-zinc-600">
-              详见「智能体」选项卡
-            </span>
-          </div>
-        </Reveal>
       </div>
     </section>
   );

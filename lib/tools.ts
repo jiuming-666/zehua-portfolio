@@ -46,7 +46,7 @@ export const tools: Tool[] = [
     name: "ADC 电压换算器",
     en: "ADC Converter",
     desc: "ADC 码值 ↔ 电压双向换算，分辨率与参考电压可调",
-    available: false,
+    available: true,
   },
   {
     id: "rc-filter",

@@ -66,6 +66,8 @@ export type Project = {
   featured?: boolean;
   /** 在职公司项目、涉密不放实拍图时置 true（弹窗显示保密说明卡） */
   confidential?: boolean;
+  /** 封面使用项目名艺术字排版（涉密项目不配图时使用） */
+  typo?: boolean;
   /** 工程实拍证据槽位（confidential 项目留空数组） */
   artifacts: ArtifactSlot[];
 };
@@ -81,6 +83,7 @@ export const projects: Project[] = [
     subtitle: "Wireless Spectral Illuminance Meter",
     category: "IoT / 异构芯片",
     domain: "hw-sw",
+    typo: true,
     cover:
       "https://images.unsplash.com/photo-1563089145-599997674d42?q=80&w=1600&auto=format&fit=crop",
     status: ["独立全链路交付", "无线 OTA 已验证"],
@@ -106,6 +109,7 @@ export const projects: Project[] = [
     subtitle: "Spectral Color Luminance Meter",
     category: "仪器 / FPGA+MCU",
     domain: "hw-sw",
+    typo: true,
     cover:
       "https://images.unsplash.com/photo-1574169208507-84376144848b?q=80&w=1600&auto=format&fit=crop",
     status: ["FPGA+MCU+Qt 三维架构", "已落地产线"],
@@ -131,6 +135,7 @@ export const projects: Project[] = [
     subtitle: "10-in-1 Optical Flicker Analyzer",
     category: "检测仪器 / FPGA+DSP",
     domain: "hw-sw",
+    typo: true,
     cover:
       "https://images.unsplash.com/photo-1550985616-10810253b84d?q=80&w=1600&auto=format&fit=crop",
     status: ["主导架构设计", "十项指标全通过"],
