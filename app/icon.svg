@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="1.4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+  <!-- 深黑圆角底 + 微弱边框 -->
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7" fill="#09090b" stroke="#27272a"/>
+  <!-- 微弱刻度网格点（波形导向氛围） -->
+  <g fill="#27272a">
+    <circle cx="6" cy="6" r="0.75"/>
+    <circle cx="16" cy="6" r="0.75"/>
+    <circle cx="26" cy="6" r="0.75"/>
+    <circle cx="6" cy="26" r="0.75"/>
+    <circle cx="16" cy="26" r="0.75"/>
+    <circle cx="26" cy="26" r="0.75"/>
+  </g>
+  <!-- 示波器阶跃脉冲方波（带发光质感） -->
+  <g filter="url(#glow)" fill="none" stroke="#f97316" stroke-width="2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M4 20 H9 V12 H15 V20 H21 V12 H27"/>
+  </g>
+</svg>

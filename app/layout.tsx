@@ -14,8 +14,8 @@ const inter = Inter({
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
   title: {
-    default: `${site.nameEn} — ${site.role}`,
-    template: `%s — ${site.nameZh}`,
+    default: "Zehua Lab | 硬件与嵌入式工程站",
+    template: "%s | Zehua Lab",
   },
   description: `${site.nameZh} · ${site.role}。${site.tagline}。每一个项目都有真实的电路、波形与整机支撑。`,
   keywords: [
@@ -34,8 +34,8 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     url: site.url,
-    siteName: `${site.nameEn} — Engineering Hub`,
-    title: `${site.nameEn} — ${site.role}`,
+    siteName: "Zehua Lab",
+    title: "Zehua Lab | 硬件与嵌入式工程站",
     description: `${site.nameZh} · ${site.role}。每一个项目都有真实的电路、波形与整机支撑。`,
     locale: "zh_CN",
   },
