@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type FormEvent } from "react";
 
 /**
  * 串口调试助手。
@@ -49,6 +49,11 @@ type LogEntry = {
   dir: Direction;
   time: string;
   bytes: Uint8Array;
+};
+
+type SendRow = {
+  id: number;
+  text: string;
 };
 
 type Session = {
@@ -128,6 +133,12 @@ function parseHex(input: string): Uint8Array | null {
     out[i] = Number.parseInt(clean.slice(i * 2, i * 2 + 2), 16);
   }
   return out;
+}
+
+function encodePayload(text: string, mode: ViewMode, lineEnding: LineEnding): Uint8Array | null {
+  const body = mode === "hex" ? parseHex(text) : new TextEncoder().encode(text);
+  if (!body) return null;
+  return withEnding(body, lineEnding);
 }
 
 function withEnding(body: Uint8Array, ending: LineEnding): Uint8Array {
@@ -225,8 +236,18 @@ export default function SerialAssistant() {
   const [rxBytes, setRxBytes] = useState(0);
   const [txBytes, setTxBytes] = useState(0);
   const [draft, setDraft] = useState("");
-  const [ending, setEnding] = useState<LineEnding>("crlf");
+  const [ending, setEnding] = useState<LineEnding>("none");
   const [sendMode, setSendMode] = useState<ViewMode>("ascii");
+  const [expanded, setExpanded] = useState(false);
+  const [rows, setRows] = useState<SendRow[]>([
+    { id: 1, text: "" },
+    { id: 2, text: "" },
+  ]);
+  const [loopEnabled, setLoopEnabled] = useState(false);
+  const [loopCount, setLoopCount] = useState(0);
+  const [intervalMs, setIntervalMs] = useState(200);
+  const [sequenceRunning, setSequenceRunning] = useState(false);
+  const [loopRound, setLoopRound] = useState(0);
   const [error, setError] = useState("");
   const [sendError, setSendError] = useState("");
 
@@ -239,6 +260,26 @@ export default function SerialAssistant() {
   const rxPending = useRef<Uint8Array[]>([]);
   const rxTimer = useRef<number | null>(null);
   const sendQueue = useRef<Promise<void>>(Promise.resolve());
+  const rowSeed = useRef(2);
+  const loopStopRef = useRef(false);
+  const runningRef = useRef(false);
+  const expandedRef = useRef(false);
+  const rowsRef = useRef(rows);
+  const loopEnabledRef = useRef(false);
+  const loopCountRef = useRef(0);
+  const intervalRef = useRef(200);
+  const sendModeRef = useRef<ViewMode>("ascii");
+  const endingRef = useRef<LineEnding>("none");
+  const draftRef = useRef("");
+
+  expandedRef.current = expanded;
+  rowsRef.current = rows;
+  loopEnabledRef.current = loopEnabled;
+  loopCountRef.current = loopCount;
+  intervalRef.current = intervalMs;
+  sendModeRef.current = sendMode;
+  endingRef.current = ending;
+  draftRef.current = draft;
 
   function applyPorts(list: SerialPort[], prefer?: SerialPort) {
     const openPort = sessionRef.current?.port;
@@ -334,6 +375,7 @@ export default function SerialAssistant() {
 
   /** 先等发送结束，再停读，最后关端口，避免读写锁互相卡住。 */
   function shutdown(session: Session) {
+    loopStopRef.current = true;
     if (session.stopping) return session.stopDone;
     session.stopping = true;
     session.keepReading = false;
@@ -447,43 +489,130 @@ export default function SerialAssistant() {
     setTxBytes(0);
   }
 
-  function send() {
+  function writePayload(payload: Uint8Array) {
+    const session = sessionRef.current;
+    const port = session?.port;
+    if (!session || !port?.writable || session.stopping) {
+      return Promise.reject(new Error("串口已关闭"));
+    }
+    const job = sendQueue.current.then(async () => {
+      if (!port.writable) throw new Error("串口已关闭");
+      let writer: WritableStreamDefaultWriter<Uint8Array>;
+      try {
+        writer = port.writable.getWriter();
+      } catch (err) {
+        throw err instanceof Error ? err : new Error("串口操作失败");
+      }
+      try {
+        await writer.write(payload);
+        pushLog("tx", payload);
+      } finally {
+        writer.releaseLock();
+      }
+    });
+    sendQueue.current = job.catch(() => undefined);
+    return job;
+  }
+
+  function waitGap(ms: number) {
+    if (ms <= 0) return Promise.resolve();
+    return new Promise<void>((resolve) => {
+      const started = Date.now();
+      const timer = window.setInterval(() => {
+        if (loopStopRef.current || !alive.current || Date.now() - started >= ms) {
+          window.clearInterval(timer);
+          resolve();
+        }
+      }, 40);
+    });
+  }
+
+  function sendDraft() {
     const session = sessionRef.current;
     if (!session?.port.writable || session.stopping) {
       setSendError("请先打开串口");
       return;
     }
-    const body = sendMode === "hex" ? parseHex(draft) : new TextEncoder().encode(draft);
-    if (!body) {
+    const payload = encodePayload(draftRef.current, sendModeRef.current, endingRef.current);
+    if (!payload) {
       setSendError("HEX 需要成对的十六进制字符，例如 01 03 00 00");
       return;
     }
-    const payload = withEnding(body, ending);
     if (!payload.length) return;
     setSendError("");
-    const port = session.port;
-    sendQueue.current = sendQueue.current.then(async () => {
-      // 关闭时会先等这条队列写完，所以这里不因 stopping 丢弃已排队的数据
-      if (!port.writable) {
-        if (alive.current) setSendError("串口已关闭");
-        return;
-      }
-      let writer: WritableStreamDefaultWriter<Uint8Array>;
-      try {
-        writer = port.writable.getWriter();
-      } catch (err) {
-        if (alive.current) setSendError(explain(err));
-        return;
-      }
-      try {
-        await writer.write(payload);
-        pushLog("tx", payload);
-      } catch (err) {
-        if (alive.current) setSendError(explain(err));
-      } finally {
-        writer.releaseLock();
-      }
+    void writePayload(payload).catch((err) => {
+      if (alive.current) setSendError(err instanceof Error ? err.message : "串口操作失败");
     });
+  }
+
+  function payloadsFromRows(): Uint8Array[] | null {
+    const mode = sendModeRef.current;
+    const lineEnding = endingRef.current;
+    const list: Uint8Array[] = [];
+    for (let i = 0; i < rowsRef.current.length; i++) {
+      const text = rowsRef.current[i].text;
+      if (!text.trim()) continue;
+      const payload = encodePayload(text, mode, lineEnding);
+      if (!payload) {
+        setSendError(`第 ${i + 1} 条 HEX 需要成对的十六进制字符`);
+        return null;
+      }
+      if (payload.length) list.push(payload);
+    }
+    if (!list.length) {
+      setSendError("请先填写要发送的内容");
+      return null;
+    }
+    return list;
+  }
+
+  async function sendRows() {
+    const session = sessionRef.current;
+    if (!session?.port.writable || session.stopping) {
+      setSendError("请先打开串口");
+      return;
+    }
+    const payloads = payloadsFromRows();
+    if (!payloads) return;
+    const looping = loopEnabledRef.current;
+    const times = loopCountRef.current > 0 ? loopCountRef.current : 0;
+    setSendError("");
+    loopStopRef.current = false;
+    runningRef.current = true;
+    setSequenceRunning(true);
+    setLoopRound(0);
+    let round = 0;
+    try {
+      do {
+        if (loopStopRef.current || !alive.current) break;
+        round += 1;
+        if (alive.current) setLoopRound(round);
+        for (let i = 0; i < payloads.length; i++) {
+          if (loopStopRef.current || !alive.current) return;
+          await writePayload(payloads[i]);
+          if (loopStopRef.current || !alive.current) return;
+          const anotherRound = looping && (times === 0 || round < times);
+          if (i < payloads.length - 1 || anotherRound) await waitGap(intervalRef.current);
+        }
+      } while (looping && !loopStopRef.current && (times === 0 || round < times));
+    } catch (err) {
+      if (alive.current && !loopStopRef.current && !sessionRef.current?.stopping) {
+        setSendError(err instanceof Error ? err.message : "串口操作失败");
+      }
+    } finally {
+      runningRef.current = false;
+      if (alive.current) setSequenceRunning(false);
+    }
+  }
+
+  function handleSend(event: FormEvent) {
+    event.preventDefault();
+    if (runningRef.current) {
+      loopStopRef.current = true;
+      return;
+    }
+    if (expandedRef.current) void sendRows();
+    else sendDraft();
   }
 
   useEffect(() => {
@@ -717,13 +846,7 @@ export default function SerialAssistant() {
         </div>
       </div>
 
-      <form
-        className="mt-4"
-        onSubmit={(event) => {
-          event.preventDefault();
-          send();
-        }}
-      >
+      <form className="mt-4" onSubmit={handleSend}>
         <div className="flex flex-wrap items-center gap-2">
           <span className="text-sm text-zinc-300">发送</span>
           {(
@@ -770,25 +893,153 @@ export default function SerialAssistant() {
               {item.label}
             </button>
           ))}
-        </div>
-        <div className="mt-2 flex gap-2">
-          <input
-            value={draft}
-            onChange={(event) => {
-              setDraft(event.target.value);
-              setSendError("");
-            }}
-            placeholder={sendMode === "hex" ? "例如 01 03 00 00 00 01" : "输入要发送的文本，回车发送"}
-            className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-950/80 px-4 py-2.5 font-mono text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-accent/50"
-          />
           <button
-            type="submit"
-            disabled={!open || busy}
-            className="rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.25)] disabled:cursor-not-allowed disabled:opacity-40"
+            type="button"
+            onClick={() => {
+              if (runningRef.current) loopStopRef.current = true;
+              setExpanded((value) => !value);
+            }}
+            className={`rounded-full px-3 py-1 text-xs transition-all duration-200 ${
+              expanded
+                ? "bg-accent font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.3)]"
+                : "border border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:border-zinc-700 hover:text-zinc-100"
+            }`}
           >
-            发送
+            拓展
           </button>
         </div>
+
+        {expanded ? (
+          <div className="mt-3 space-y-2">
+            {rows.map((row, index) => (
+              <div key={row.id} className="flex items-center gap-2">
+                <span className="w-12 shrink-0 text-xs text-zinc-500">第{index + 1}条</span>
+                <input
+                  value={row.text}
+                  onChange={(event) => {
+                    const text = event.target.value;
+                    setRows((current) =>
+                      current.map((item) => (item.id === row.id ? { ...item, text } : item)),
+                    );
+                    setSendError("");
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === "Enter") event.preventDefault();
+                  }}
+                  placeholder={sendMode === "hex" ? "例如 01 03 00 00" : "这一条要发送的内容"}
+                  className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-950/80 px-4 py-2.5 font-mono text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-accent/50"
+                />
+                <button
+                  type="button"
+                  onClick={() =>
+                    setRows((current) =>
+                      current.length <= 1 ? current : current.filter((item) => item.id !== row.id),
+                    )
+                  }
+                  disabled={rows.length <= 1 || sequenceRunning}
+                  className={quietButtonClass}
+                >
+                  删除
+                </button>
+              </div>
+            ))}
+
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 pt-1">
+              <button
+                type="button"
+                onClick={() => {
+                  rowSeed.current += 1;
+                  const id = rowSeed.current;
+                  setRows((current) => [...current, { id, text: "" }]);
+                }}
+                disabled={sequenceRunning}
+                className={quietButtonClass}
+              >
+                添加一条
+              </button>
+              <label className="flex items-center gap-2 text-sm text-zinc-300">
+                <input
+                  type="checkbox"
+                  checked={loopEnabled}
+                  onChange={(event) => {
+                    if (!event.target.checked && loopEnabledRef.current) loopStopRef.current = true;
+                    setLoopEnabled(event.target.checked);
+                  }}
+                  className="h-3.5 w-3.5 accent-[#ff5c1a]"
+                />
+                循环
+              </label>
+              <label className="flex items-center gap-2 text-sm text-zinc-300">
+                次数
+                <input
+                  type="number"
+                  min={0}
+                  value={loopCount}
+                  disabled={sequenceRunning}
+                  onChange={(event) => {
+                    const next = Number.parseInt(event.target.value, 10);
+                    setLoopCount(Number.isFinite(next) && next > 0 ? next : 0);
+                  }}
+                  className={`${fieldClass} w-20`}
+                />
+              </label>
+              <label className="flex items-center gap-2 text-sm text-zinc-300">
+                间隔
+                <input
+                  type="number"
+                  min={0}
+                  value={intervalMs}
+                  disabled={sequenceRunning}
+                  onChange={(event) => {
+                    const next = Number.parseInt(event.target.value, 10);
+                    setIntervalMs(Number.isFinite(next) && next > 0 ? next : 0);
+                  }}
+                  className={`${fieldClass} w-24`}
+                />
+                <span className="text-xs text-zinc-500">ms</span>
+              </label>
+              {sequenceRunning && loopEnabled && (
+                <span className="text-xs text-zinc-400">
+                  循环中 · 第 {loopRound} 轮{loopCount > 0 ? ` / ${loopCount}` : " · 一直循环"}
+                </span>
+              )}
+              <button
+                type="submit"
+                disabled={(!open || busy) && !sequenceRunning}
+                className={`ml-auto rounded-xl px-4 py-2.5 text-sm font-medium text-white disabled:cursor-not-allowed disabled:opacity-40 ${
+                  sequenceRunning
+                    ? "border border-zinc-700 bg-zinc-900"
+                    : "bg-accent shadow-[0_0_20px_rgba(255,92,26,0.25)]"
+                }`}
+              >
+                {sequenceRunning ? "停止" : "发送"}
+              </button>
+            </div>
+            <p className="text-xs leading-relaxed text-zinc-600">
+              没勾选循环时，点发送会按顺序发完一轮。勾选后，次数 0 表示一直循环，填 10 就整组发 10 轮。间隔是相邻两条之间的等待，填 0 则连续发送。
+            </p>
+          </div>
+        ) : (
+          <div className="mt-2 flex gap-2">
+            <input
+              value={draft}
+              onChange={(event) => {
+                setDraft(event.target.value);
+                setSendError("");
+              }}
+              placeholder={sendMode === "hex" ? "例如 01 03 00 00 00 01" : "输入要发送的文本，回车发送"}
+              className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-950/80 px-4 py-2.5 font-mono text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-accent/50"
+            />
+            <button
+              type="submit"
+              disabled={!open || busy}
+              className="rounded-xl bg-accent px-4 py-2.5 text-sm font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.25)] disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              发送
+            </button>
+          </div>
+        )}
+
         {sendError && <p className="mt-2 text-sm text-red-400">{sendError}</p>}
       </form>
 

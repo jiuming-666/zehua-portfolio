@@ -45,7 +45,7 @@ export const tools: Tool[] = [
     id: "serial-monitor",
     name: "串口调试助手",
     en: "Serial Monitor",
-    desc: "浏览器直接开关串口并收发数据，支持波特率与帧格式、ASCII / HEX、时间戳与自动滚动",
+    desc: "浏览器直接开关串口并收发数据，支持帧格式、ASCII / HEX，以及多条拓展循环发送",
     available: true,
   },
 ];
