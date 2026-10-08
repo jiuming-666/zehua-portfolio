@@ -41,4 +41,11 @@ export const tools: Tool[] = [
     desc: "4 字节 HEX ↔ 单精度浮点互转，支持大小端序切换，串口与工业总线数据解析必备",
     available: true,
   },
+  {
+    id: "serial-monitor",
+    name: "串口调试助手",
+    en: "Serial Monitor",
+    desc: "浏览器直接开关串口并收发数据，支持波特率与帧格式、ASCII / HEX、时间戳与自动滚动",
+    available: true,
+  },
 ];
