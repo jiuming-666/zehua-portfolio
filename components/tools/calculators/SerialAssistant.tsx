@@ -752,16 +752,16 @@ export default function SerialAssistant() {
           {(
             [
               { key: "none", label: "无" },
-              { key: "cr", label: "CR" },
-              { key: "lf", label: "LF" },
-              { key: "crlf", label: "CRLF" },
+              { key: "cr", label: "\\r" },
+              { key: "lf", label: "\\n" },
+              { key: "crlf", label: "\\r\\n" },
             ] as const
           ).map((item) => (
             <button
               key={item.key}
               type="button"
               onClick={() => setEnding(item.key)}
-              className={`rounded-full px-3 py-1 text-xs transition-all duration-200 ${
+              className={`rounded-full px-3 py-1 font-mono text-xs transition-all duration-200 ${
                 ending === item.key
                   ? "bg-accent font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.3)]"
                   : "border border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:border-zinc-700 hover:text-zinc-100"
