@@ -1,6 +1,13 @@
 "use client";
 
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { Check, Copy } from "lucide-react";
+import {
+  CHARSET_OPTIONS,
+  decodeText,
+  encodeText,
+  type Charset,
+} from "@/lib/charset";
 
 /**
  * 串口调试助手。
@@ -123,11 +130,8 @@ function hexOf(bytes: Uint8Array): string {
   return parts.join(" ");
 }
 
-function asciiOf(bytes: Uint8Array): string {
-  return new TextDecoder("utf-8", { fatal: false })
-    .decode(bytes)
-    .replace(/\r\n/g, "\n")
-    .replace(/\r/g, "\n");
+function textOf(bytes: Uint8Array, charset: Charset): string {
+  return decodeText(bytes, charset).replace(/\r\n/g, "\n").replace(/\r/g, "\n");
 }
 
 /** 容忍空格、逗号和 0x 前缀。非法字符或奇数个半字节返回 null。 */
@@ -143,8 +147,13 @@ function parseHex(input: string): Uint8Array | null {
   return out;
 }
 
-function encodePayload(text: string, mode: ViewMode, lineEnding: LineEnding): Uint8Array | null {
-  const body = mode === "hex" ? parseHex(text) : new TextEncoder().encode(text);
+function encodePayload(
+  text: string,
+  mode: ViewMode,
+  lineEnding: LineEnding,
+  charset: Charset,
+): Uint8Array | null {
+  const body = mode === "hex" ? parseHex(text) : encodeText(text, charset);
   if (!body) return null;
   return withEnding(body, lineEnding);
 }
@@ -238,11 +247,13 @@ export default function SerialAssistant() {
   const [stopBits, setStopBits] = useState<StopBits>(1);
   const [parity, setParity] = useState<Parity>("none");
   const [view, setView] = useState<ViewMode>("ascii");
+  const [charset, setCharset] = useState<Charset>("utf8");
   const [showTime, setShowTime] = useState(true);
   const [autoScroll, setAutoScroll] = useState(true);
   const [logs, setLogs] = useState<LogEntry[]>([]);
   const [rxBytes, setRxBytes] = useState(0);
   const [txBytes, setTxBytes] = useState(0);
+  const [copied, setCopied] = useState(false);
   const [draft, setDraft] = useState("");
   const [ending, setEnding] = useState<LineEnding>("none");
   const [sendMode, setSendMode] = useState<ViewMode>("ascii");
@@ -276,6 +287,7 @@ export default function SerialAssistant() {
   const loopCountRef = useRef(0);
   const sendModeRef = useRef<ViewMode>("ascii");
   const endingRef = useRef<LineEnding>("none");
+  const charsetRef = useRef<Charset>("utf8");
   const draftRef = useRef("");
 
   expandedRef.current = expanded;
@@ -284,6 +296,7 @@ export default function SerialAssistant() {
   loopCountRef.current = loopCount;
   sendModeRef.current = sendMode;
   endingRef.current = ending;
+  charsetRef.current = charset;
   draftRef.current = draft;
 
   function applyPorts(list: SerialPort[], prefer?: SerialPort) {
@@ -494,6 +507,30 @@ export default function SerialAssistant() {
     setTxBytes(0);
   }
 
+  function logPlainText(): string {
+    return logs
+      .map((entry) => {
+        const time = showTime ? `[${entry.time}] ` : "";
+        const dir = entry.dir === "tx" ? "发 " : "收 ";
+        const body = view === "hex" ? hexOf(entry.bytes) : textOf(entry.bytes, charset);
+        return `${time}${dir}${body}`;
+      })
+      .join("\n");
+  }
+
+  async function copyLog() {
+    if (!logs.length) return;
+    try {
+      await navigator.clipboard.writeText(logPlainText());
+      setCopied(true);
+      window.setTimeout(() => {
+        if (alive.current) setCopied(false);
+      }, 1500);
+    } catch {
+      setError("复制失败，请检查浏览器剪贴板权限");
+    }
+  }
+
   function writePayload(payload: Uint8Array) {
     const session = sessionRef.current;
     const port = session?.port;
@@ -538,7 +575,12 @@ export default function SerialAssistant() {
       setSendError("请先打开串口");
       return;
     }
-    const payload = encodePayload(draftRef.current, sendModeRef.current, endingRef.current);
+    const payload = encodePayload(
+      draftRef.current,
+      sendModeRef.current,
+      endingRef.current,
+      charsetRef.current,
+    );
     if (!payload) {
       setSendError("HEX 需要成对的十六进制字符，例如 01 03 00 00");
       return;
@@ -553,11 +595,12 @@ export default function SerialAssistant() {
   function payloadsFromRows(): { bytes: Uint8Array; gap: number }[] | null {
     const mode = sendModeRef.current;
     const lineEnding = endingRef.current;
+    const textCharset = charsetRef.current;
     const list: { bytes: Uint8Array; gap: number }[] = [];
     for (let i = 0; i < rowsRef.current.length; i++) {
       const row = rowsRef.current[i];
       if (!row.text.trim()) continue;
-      const payload = encodePayload(row.text, mode, lineEnding);
+      const payload = encodePayload(row.text, mode, lineEnding, textCharset);
       if (!payload) {
         setSendError(`第 ${i + 1} 条 HEX 需要成对的十六进制字符`);
         return null;
@@ -804,6 +847,21 @@ export default function SerialAssistant() {
               {item.label}
             </button>
           ))}
+          <span className="ml-1 text-sm text-zinc-300">编码</span>
+          {CHARSET_OPTIONS.map((item) => (
+            <button
+              key={item.key}
+              type="button"
+              onClick={() => setCharset(item.key)}
+              className={`rounded-full px-3 py-1 text-xs transition-all duration-200 ${
+                charset === item.key
+                  ? "bg-accent font-medium text-white shadow-[0_0_20px_rgba(255,92,26,0.3)]"
+                  : "border border-zinc-800 bg-zinc-950/60 text-zinc-400 hover:border-zinc-700 hover:text-zinc-100"
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
           <button
             type="button"
             onClick={() => setShowTime((value) => !value)}
@@ -826,6 +884,22 @@ export default function SerialAssistant() {
           >
             自动滚动
           </button>
+          <button
+            type="button"
+            onClick={() => void copyLog()}
+            disabled={!logs.length}
+            className={`inline-flex items-center gap-1.5 ${quietButtonClass}`}
+          >
+            {copied ? (
+              <>
+                <Check className="h-3.5 w-3.5 text-neon" /> 已复制
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5" /> 复制
+              </>
+            )}
+          </button>
           <button type="button" onClick={clearView} className={quietButtonClass}>
             清空
           </button>
@@ -846,7 +920,7 @@ export default function SerialAssistant() {
                 <div key={entry.id} className={entry.dir === "tx" ? "text-neon" : "text-zinc-200"}>
                   {showTime && <span className="text-zinc-500">[{entry.time}] </span>}
                   <span className="text-zinc-500">{entry.dir === "tx" ? "发 " : "收 "}</span>
-                  {view === "hex" ? hexOf(entry.bytes) : asciiOf(entry.bytes)}
+                  {view === "hex" ? hexOf(entry.bytes) : textOf(entry.bytes, charset)}
                 </div>
               ))}
             </div>
@@ -1068,7 +1142,7 @@ export default function SerialAssistant() {
 
       <p className="mt-4 text-xs leading-relaxed text-zinc-600">
         「选择端口」会弹出浏览器的系统窗口，COM 口号只在那里显示；「刷新」只更新已经授权过的端口。
-        需要桌面版 Chrome、Edge 或较新的 Firefox，并且设备已经在系统里显示为串口。
+        编码同时作用于文本显示与文本发送；HEX 收发不受编码影响。「复制」会按当前显示方式拷贝接收框内容。
         收发只发生在本机浏览器和串口之间，不会上传。绿色文字是发出的数据。
       </p>
     </div>
