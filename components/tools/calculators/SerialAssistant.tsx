@@ -54,6 +54,8 @@ type LogEntry = {
 type SendRow = {
   id: number;
   text: string;
+  /** 这条发出之后、下一条发出之前的等待 */
+  gap: number;
 };
 
 type Session = {
@@ -66,6 +68,12 @@ type Session = {
 };
 
 const BAUD_RATES = [1200, 2400, 4800, 9600, 19200, 38400, 57600, 115200, 230400, 460800, 921600];
+/**
+ * 最小 10ms：浏览器定时器大约 4ms 才稳，再短停止和接收刷新会挤在一起。
+ * 默认 50ms：短指令在 115200 下传完大约几毫秒，50ms 够模块处理完再发下一条。
+ */
+const MIN_ROW_GAP_MS = 10;
+const DEFAULT_ROW_GAP_MS = 50;
 const MAX_LOG_ENTRIES = 500;
 const MAX_LOG_BYTES = 200_000;
 const RX_FLUSH_MS = 50;
@@ -240,12 +248,11 @@ export default function SerialAssistant() {
   const [sendMode, setSendMode] = useState<ViewMode>("ascii");
   const [expanded, setExpanded] = useState(false);
   const [rows, setRows] = useState<SendRow[]>([
-    { id: 1, text: "" },
-    { id: 2, text: "" },
+    { id: 1, text: "", gap: DEFAULT_ROW_GAP_MS },
+    { id: 2, text: "", gap: DEFAULT_ROW_GAP_MS },
   ]);
   const [loopEnabled, setLoopEnabled] = useState(false);
   const [loopCount, setLoopCount] = useState(0);
-  const [intervalMs, setIntervalMs] = useState(200);
   const [sequenceRunning, setSequenceRunning] = useState(false);
   const [loopRound, setLoopRound] = useState(0);
   const [error, setError] = useState("");
@@ -267,7 +274,6 @@ export default function SerialAssistant() {
   const rowsRef = useRef(rows);
   const loopEnabledRef = useRef(false);
   const loopCountRef = useRef(0);
-  const intervalRef = useRef(200);
   const sendModeRef = useRef<ViewMode>("ascii");
   const endingRef = useRef<LineEnding>("none");
   const draftRef = useRef("");
@@ -276,7 +282,6 @@ export default function SerialAssistant() {
   rowsRef.current = rows;
   loopEnabledRef.current = loopEnabled;
   loopCountRef.current = loopCount;
-  intervalRef.current = intervalMs;
   sendModeRef.current = sendMode;
   endingRef.current = ending;
   draftRef.current = draft;
@@ -545,19 +550,22 @@ export default function SerialAssistant() {
     });
   }
 
-  function payloadsFromRows(): Uint8Array[] | null {
+  function payloadsFromRows(): { bytes: Uint8Array; gap: number }[] | null {
     const mode = sendModeRef.current;
     const lineEnding = endingRef.current;
-    const list: Uint8Array[] = [];
+    const list: { bytes: Uint8Array; gap: number }[] = [];
     for (let i = 0; i < rowsRef.current.length; i++) {
-      const text = rowsRef.current[i].text;
-      if (!text.trim()) continue;
-      const payload = encodePayload(text, mode, lineEnding);
+      const row = rowsRef.current[i];
+      if (!row.text.trim()) continue;
+      const payload = encodePayload(row.text, mode, lineEnding);
       if (!payload) {
         setSendError(`第 ${i + 1} 条 HEX 需要成对的十六进制字符`);
         return null;
       }
-      if (payload.length) list.push(payload);
+      if (payload.length) {
+        const gap = Number.isFinite(row.gap) ? Math.max(MIN_ROW_GAP_MS, Math.round(row.gap)) : DEFAULT_ROW_GAP_MS;
+        list.push({ bytes: payload, gap });
+      }
     }
     if (!list.length) {
       setSendError("请先填写要发送的内容");
@@ -589,10 +597,10 @@ export default function SerialAssistant() {
         if (alive.current) setLoopRound(round);
         for (let i = 0; i < payloads.length; i++) {
           if (loopStopRef.current || !alive.current) return;
-          await writePayload(payloads[i]);
+          await writePayload(payloads[i].bytes);
           if (loopStopRef.current || !alive.current) return;
           const anotherRound = looping && (times === 0 || round < times);
-          if (i < payloads.length - 1 || anotherRound) await waitGap(intervalRef.current);
+          if (i < payloads.length - 1 || anotherRound) await waitGap(payloads[i].gap);
         }
       } while (looping && !loopStopRef.current && (times === 0 || round < times));
     } catch (err) {
@@ -929,6 +937,36 @@ export default function SerialAssistant() {
                   placeholder={sendMode === "hex" ? "例如 01 03 00 00" : "这一条要发送的内容"}
                   className="min-w-0 flex-1 rounded-xl border border-zinc-800 bg-zinc-950/80 px-4 py-2.5 font-mono text-sm text-zinc-100 outline-none placeholder:text-zinc-600 focus:border-accent/50"
                 />
+                <label className="flex shrink-0 items-center gap-1.5 text-xs text-zinc-400">
+                  间隔
+                  <input
+                    type="number"
+                    min={MIN_ROW_GAP_MS}
+                    value={row.gap}
+                    disabled={sequenceRunning}
+                    onChange={(event) => {
+                      const next = Number.parseInt(event.target.value, 10);
+                      setRows((current) =>
+                        current.map((item) =>
+                          item.id === row.id
+                            ? { ...item, gap: Number.isFinite(next) ? next : MIN_ROW_GAP_MS }
+                            : item,
+                        ),
+                      );
+                    }}
+                    onBlur={() => {
+                      setRows((current) =>
+                        current.map((item) =>
+                          item.id === row.id
+                            ? { ...item, gap: Math.max(MIN_ROW_GAP_MS, Math.round(item.gap) || MIN_ROW_GAP_MS) }
+                            : item,
+                        ),
+                      );
+                    }}
+                    className={`${fieldClass} w-20`}
+                  />
+                  ms
+                </label>
                 <button
                   type="button"
                   onClick={() =>
@@ -950,7 +988,7 @@ export default function SerialAssistant() {
                 onClick={() => {
                   rowSeed.current += 1;
                   const id = rowSeed.current;
-                  setRows((current) => [...current, { id, text: "" }]);
+                  setRows((current) => [...current, { id, text: "", gap: DEFAULT_ROW_GAP_MS }]);
                 }}
                 disabled={sequenceRunning}
                 className={quietButtonClass}
@@ -983,21 +1021,6 @@ export default function SerialAssistant() {
                   className={`${fieldClass} w-20`}
                 />
               </label>
-              <label className="flex items-center gap-2 text-sm text-zinc-300">
-                间隔
-                <input
-                  type="number"
-                  min={0}
-                  value={intervalMs}
-                  disabled={sequenceRunning}
-                  onChange={(event) => {
-                    const next = Number.parseInt(event.target.value, 10);
-                    setIntervalMs(Number.isFinite(next) && next > 0 ? next : 0);
-                  }}
-                  className={`${fieldClass} w-24`}
-                />
-                <span className="text-xs text-zinc-500">ms</span>
-              </label>
               {sequenceRunning && loopEnabled && (
                 <span className="text-xs text-zinc-400">
                   循环中 · 第 {loopRound} 轮{loopCount > 0 ? ` / ${loopCount}` : " · 一直循环"}
@@ -1016,7 +1039,7 @@ export default function SerialAssistant() {
               </button>
             </div>
             <p className="text-xs leading-relaxed text-zinc-600">
-              没勾选循环时，点发送会按顺序发完一轮。勾选后，次数 0 表示一直循环，填 10 就整组发 10 轮。间隔是相邻两条之间的等待，填 0 则连续发送。
+              没勾选循环时，点发送会按顺序发完一轮。勾选后，次数 0 表示一直循环，填 10 就整组发 10 轮。每条右侧的间隔是这条发完后再发下一条的等待，最小 10 ms。
             </p>
           </div>
         ) : (
