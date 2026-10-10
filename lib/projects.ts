@@ -278,10 +278,10 @@ export const projects: Project[] = [
     span: "wide",
     featured: true,
     artifacts: [
-      { slot: 1, category: "Main UI", categoryZh: "主界面", caption: "Qt Widgets 工作站主界面 · 光谱测量页：QCustomPlot 实时曲线 + 色温 / 照度光色结果" },
-      { slot: 2, category: "Calibration", categoryZh: "光色定标", caption: "光谱 / 频闪定标页：校零与定标进度独立线程回传，不阻塞界面" },
-      { slot: 3, category: "Flicker", categoryZh: "频闪测量", caption: "频闪测量页：波形绘制与频闪指标结果" },
-      { slot: 4, category: "Device & OTA", categoryZh: "设备与升级", caption: "设备管理 / 远程固件升级 / 一键冒烟测试（失败时保留收发记录）" },
+      { slot: 1, category: "Spectrum", categoryZh: "光谱测量", caption: "光谱测量页：QCustomPlot 实时曲线 + 色温 / 照度等光色结果直读与导出" },
+      { slot: 2, category: "Flicker", categoryZh: "频闪测量", caption: "频闪测量页：波形绘制与频闪测量 / 定标结果" },
+      { slot: 3, category: "Device Control", categoryZh: "设备控制", caption: "设备控制页：设备参数管理、校零与联机调试" },
+      { slot: 4, category: "Firmware OTA", categoryZh: "固件升级", caption: "远程固件升级页：升级进度与收发记录，测试失败可留痕对问题" },
     ],
   },
 ];
