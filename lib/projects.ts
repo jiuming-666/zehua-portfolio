@@ -23,8 +23,8 @@ export type ArtifactSlot = {
   caption: string;
 };
 
-/** 项目所属维度：软硬件结合 / 硬件 / 软件 */
-export type Domain = "hw-sw" | "hw" | "sw";
+/** 项目所属维度：软硬件结合 / 硬件 / 嵌入式软件 / 上位机 */
+export type Domain = "hw-sw" | "hw" | "sw" | "host";
 
 export const domainLabels: Record<Domain, { title: string; en: string; desc: string }> = {
   "hw-sw": {
@@ -38,9 +38,14 @@ export const domainLabels: Record<Domain, { title: string; en: string; desc: str
     desc: "原理图、PCB、射频与时序的独立设计能力",
   },
   sw: {
-    title: "软件",
-    en: "Software",
-    desc: "自研智能体与上位机软件开发",
+    title: "嵌入式软件设计",
+    en: "Embedded Software",
+    desc: "嵌入式固件架构与底层算法的独立开发能力",
+  },
+  host: {
+    title: "上位机设计",
+    en: "Host Software Design",
+    desc: "Qt 桌面级上位机：通信、界面与业务的一体化交付",
   },
 };
 
@@ -49,7 +54,7 @@ export type Project = {
   title: string;
   subtitle: string;
   category: string;
-  /** 所属维度（/projects 页据此分三大板块） */
+  /** 所属维度（/projects 页据此分四大板块） */
   domain: Domain;
   /** 卡片封面（若 photo-1.jpg 存在则自动被实拍图替代） */
   cover: string;
@@ -242,6 +247,39 @@ export const projects: Project[] = [
       { slot: 2, category: "PCB Layout", categoryZh: "PCB设计", caption: "双层 PCB Layout · 工业 EMI 滤波与隔离布局" },
       { slot: 3, category: "Prototype", categoryZh: "PCB实物", caption: "打样实物 PCB" },
     ],
+  },
+  {
+    id: "spectrometer-host",
+    title: "光谱仪光色校准上位机",
+    subtitle: "Spectrometer Colorimetric Calibration Host App",
+    category: "上位机 / Qt 6",
+    domain: "host",
+    typo: true,
+    cover:
+      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop",
+    status: ["独立开发", "产测 · 调试 · 回归全覆盖"],
+    tags: [
+      "C++",
+      "Qt 6 Widgets",
+      "SerialPort / Bluetooth / Network",
+      "QCustomPlot",
+      "多线程信号槽",
+      "远程固件升级",
+    ],
+    highlight:
+      "一套界面贯通串口 / 蓝牙 / USB / Wi-Fi TCP 四条链路：光谱与频闪测量定标、色温照度直读、远程固件升级与一键冒烟测试；协议收发独立线程，耗时操作不卡 UI，Windows 单 exe 直接交付",
+    deepDive:
+      "独立开发光谱仪上位机，用于产测和调试时与设备联机，完成测量、定标、升级和回归测试。界面、通信和业务都放在 Qt 上，一条链路从串口收到数据，可以直接刷新曲线和页面。用 Qt Widgets 搭整套工作站界面：光谱、频闪、升级、设备管理和冒烟测试分页切换，自定义标题栏、深色主题，光谱和波形用 QCustomPlot 绘图，结果表格和曲线在同一套界面里看。通信全部用 Qt 模块：SerialPort 走串口和 USB，Bluetooth 走蓝牙，Network 走 WiFi 的 TCP，四种口共用同一套收发，页面只订阅结果、不关心当前是哪条链路。协议收发放在独立线程，用信号槽把测量数据、定标进度和错误抛回界面，校零、定标、大包光谱等耗时操作不会卡住窗口，状态和曲线可以边收边画。完成光谱测量与定标、频闪测量与定标，在界面上直接给出色温、照度等光色结果，并支持曲线查看和导出。用 Qt 做设备参数管理、远程固件升级和一键冒烟测试，测试失败时把收发记录留在界面上，方便和固件对问题。最后用 Qt 自带的部署工具把依赖收齐，在 Windows 上打成一个可直接运行的 exe。",
+    specs: [
+      { label: "通信", value: "串口/蓝牙/WiFi" },
+      { label: "绘图", value: "QCustomPlot" },
+      { label: "升级", value: "远程固件" },
+      { label: "交付", value: "Windows 单 exe" },
+    ],
+    span: "wide",
+    featured: true,
+    confidential: true,
+    artifacts: [],
   },
 ];
 

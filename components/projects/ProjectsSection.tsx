@@ -8,6 +8,7 @@ import {
   Bot,
   CircuitBoard,
   Cpu,
+  Monitor,
   type LucideIcon,
 } from "lucide-react";
 import Reveal from "@/components/common/Reveal";
@@ -20,10 +21,11 @@ const domainIcons: Record<Domain, LucideIcon> = {
   "hw-sw": CircuitBoard,
   hw: Cpu,
   sw: Bot,
+  host: Monitor,
 };
 
-/** 三大板块的展示顺序 */
-const domainOrder: Domain[] = ["hw-sw", "hw", "sw"];
+/** 四大板块的展示顺序 */
+const domainOrder: Domain[] = ["hw-sw", "hw", "sw", "host"];
 
 type ProjectsSectionProps = {
   /** 展示的项目列表（须先经服务端 attachEvidence 处理） */
@@ -31,7 +33,7 @@ type ProjectsSectionProps = {
 };
 
 /**
- * /projects 页主体：按「软硬件结合 / 硬件设计 / 软件与智能体」三大板块分组展示。
+ * /projects 页主体：按「软硬件结合 / 硬件设计 / 嵌入式软件设计 / 上位机设计」四大板块分组展示。
  * 纯数据驱动——新项目在 lib/projects.ts 里标 domain 字段即自动归组。
  */
 export default function ProjectsSection({
