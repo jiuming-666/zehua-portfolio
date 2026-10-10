@@ -254,7 +254,6 @@ export const projects: Project[] = [
     subtitle: "Spectrometer Colorimetric Calibration Host App",
     category: "上位机 / Qt 6",
     domain: "host",
-    typo: true,
     cover:
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1600&auto=format&fit=crop",
     status: ["独立开发", "产测 · 调试 · 回归全覆盖"],
@@ -278,8 +277,12 @@ export const projects: Project[] = [
     ],
     span: "wide",
     featured: true,
-    confidential: true,
-    artifacts: [],
+    artifacts: [
+      { slot: 1, category: "Main UI", categoryZh: "主界面", caption: "Qt Widgets 工作站主界面 · 光谱测量页：QCustomPlot 实时曲线 + 色温 / 照度光色结果" },
+      { slot: 2, category: "Calibration", categoryZh: "光色定标", caption: "光谱 / 频闪定标页：校零与定标进度独立线程回传，不阻塞界面" },
+      { slot: 3, category: "Flicker", categoryZh: "频闪测量", caption: "频闪测量页：波形绘制与频闪指标结果" },
+      { slot: 4, category: "Device & OTA", categoryZh: "设备与升级", caption: "设备管理 / 远程固件升级 / 一键冒烟测试（失败时保留收发记录）" },
+    ],
   },
 ];
 
